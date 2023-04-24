@@ -1,0 +1,6 @@
+raytracer
+*.o
+vgcore*
+.vscode/
+*.ppm
+*.png
