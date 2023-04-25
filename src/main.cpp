@@ -6,35 +6,49 @@
 */
 
 #include <iostream>
+#include <fstream>
 #include "raytracer.hpp"
 
-void write_color(Math::Vector3D &color)
-{
-    std::cout << static_cast<int>(256 * color.x) << ' '
-              << static_cast<int>(256 * color.y) << ' '
-              << static_cast<int>(256 * color.z)
-              << std::endl;
+const int WIDTH = 800;
+const int HEIGHT = 600;
+
+Math::Vector3D color(const RayTracer::Ray& ray, const RayTracer::Sphere& sphere) {
+    if (sphere.hits(ray)) {
+        return Math::Vector3D(1, 0, 0); // Red sphere
+    }
+    // Light blue background
+    Math::Vector3D unitDirection = ray.getDirection();
+    unitDirection /= unitDirection.length();
+    double t = 0.5 * (unitDirection.getY() + 1.0);
+    return Math::Vector3D(0.5, 0.7, 1.0) * t + Math::Vector3D(1.0, 1.0, 1.0) * (1.0 - t);
 }
 
-int main()
-{
-    RayTracer::Camera cam(Math::Point3D(0, 0, 0), Math::Rectangle3D(Math::Point3D(0, 0, 0), Math::Vector3D(0, 0, 1), Math::Vector3D(1, 0, 0)));
-    RayTracer::Sphere sphere(Math::Point3D(0, 0, -1), 0.5);
+int main() {
+    std::ofstream outFile("output.ppm");
+    outFile << "P3\n" << WIDTH << " " << HEIGHT << "\n255\n";
 
-    const int image_width = 256;
-    const int image_height = 256;
+    Math::Point3D cameraOrigin(0, 0, 0);
+    Math::Rectangle3D screen(Math::Point3D(-2, -1, -1), Math::Vector3D(4, 0, 0), Math::Vector3D(0, 2, 0));
+    RayTracer::Camera camera(cameraOrigin, screen);
+    RayTracer::Sphere sphere(Math::Point3D(0, 0, -3), 1);
 
-    std::cout << "P3\n" << image_width << ' ' << image_height << "\n255\n";
+    for (int j = HEIGHT - 1; j >= 0; --j) {
+        for (int i = 0; i < WIDTH; ++i) {
+            double u = double(i) / double(WIDTH);
+            double v = double(j) / double(HEIGHT);
+            RayTracer::Ray ray = camera.ray(u, v);
+            Math::Vector3D col = color(ray, sphere);
 
-    for (int j = image_height - 1; j >= 0; --j) {
-        for (int i = 0; i < image_width; ++i) {
-            Math::Vector3D color(0, 0, 0);
-            RayTracer::Ray r = cam.ray(i, j);
-            if (sphere.hits(r))
-                color = Math::Vector3D(1, 0, 0);
-            else
-                color = Math::Vector3D(0, 0, 1);
-            write_color(color);
+            int ir = int(255.99 * col.getX());
+            int ig = int(255.99 * col.getY());
+            int ib = int(255.99 * col.getZ());
+
+            outFile << ir << " " << ig << " " << ib << "\n";
         }
     }
+
+    outFile.close();
+    std::cout << "Rendering complete. Output saved to 'output.ppm'." << std::endl;
+
+    return 0;
 }
