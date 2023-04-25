@@ -20,12 +20,12 @@ namespace RayTracer {
             Ray() : _origin(), _direction() {}
 
             Ray(const Math::Point3D &origin, const Math::Vector3D &direction)
-                : _origin(origin), _direction(direction) {}
+                : _origin(origin), _direction(direction.normalized()) {}
 
             Ray(const Ray &r)
-                : _origin(r._origin), _direction(r._direction) {}
+                : _origin(r._origin), _direction(r._direction.normalized()) {}
 
-            Ray(Ray &&r) : _origin(r._origin), _direction(r._direction) {
+            Ray(Ray &&r) : _origin(r._origin), _direction(r._direction.normalized()) {
                 r._origin = Math::Point3D();
                 r._direction = Math::Vector3D();
             }
@@ -37,7 +37,7 @@ namespace RayTracer {
             Ray &operator=(const Ray &r) {
                 if (this != &r) {
                     _origin = r._origin;
-                    _direction = r._direction;
+                    _direction = r._direction.normalized();
                 }
                 return *this;
             }
@@ -45,7 +45,7 @@ namespace RayTracer {
             Ray &operator=(Ray &&r) noexcept {
                 if (this != &r) {
                     _origin = r._origin;
-                    _direction = r._direction;
+                    _direction = r._direction.normalized();
                     r._origin = Math::Point3D();
                     r._direction = Math::Vector3D();
                 }
@@ -67,9 +67,9 @@ namespace RayTracer {
             }
 
             void setDirection(const Math::Vector3D &direction) {
-                _direction = direction;
+                _direction = direction.normalized();
             }
-    };
+    };  
 
     class Sphere {
         public:
@@ -113,13 +113,13 @@ namespace RayTracer {
             }
 
             //* Methods
-            bool hits (const Ray &ray) const {
+            bool hits(const Ray &ray) const {
                 Math::Vector3D oc = ray.getOrigin() - _center;
                 double a = ray.getDirection().dot(ray.getDirection());
                 double b = 2.0 * oc.dot(ray.getDirection());
                 double c = oc.dot(oc) - _radius * _radius;
                 double discriminant = b * b - 4 * a * c;
-                return (discriminant > 0);
+                return (discriminant >= 0);
             }
 
             //* Getters
