@@ -26,7 +26,7 @@ lights :
     diffuse = 0.6; # Multiplier of diffuse light
     # List of point lights
     point = (
-        { x = 400; y = 100; z = 500; };
+        { x = 400; y = 100; z = 500; }
     );
     # List of directional lights
     directional = () ;
