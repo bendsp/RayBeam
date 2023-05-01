@@ -128,6 +128,11 @@ namespace Math {
                 return sqrt(x * x + y * y + z * z);
             }
 
+            Vector3D normalized() const {
+                double magnitude = std::sqrt(x * x + y * y + z * z);
+                return Vector3D(x / magnitude, y / magnitude, z / magnitude);
+            }
+
             //* Getters
             double getX() const {
                 return x;
