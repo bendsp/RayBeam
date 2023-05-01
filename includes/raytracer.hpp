@@ -69,8 +69,8 @@ namespace RayTracer {
             void setDirection(const Math::Vector3D &direction) {
                 _direction = direction.normalized();
             }
-    };  
-    
+    };
+
     class Camera {
         public:
             //* Attributes
