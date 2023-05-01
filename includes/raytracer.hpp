@@ -209,3 +209,5 @@ namespace RayTracer {
             }
     };
 }
+
+int parse_file(char *filepath);

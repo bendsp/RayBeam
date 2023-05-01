@@ -6,6 +6,7 @@
 ##
 
 SRC =	src/main.cpp \
+		src/file_parser.cpp \
 
 OBJ = $(SRC:.cpp=.o)
 
@@ -16,7 +17,7 @@ CPPFLAGS = -I./includes/
 all: $(NAME)
 
 $(NAME): $(OBJ)
-		g++ -o $(NAME) $(OBJ) $(CPPFLAGS)
+		g++ -o $(NAME) $(OBJ) $(CPPFLAGS) -lconfig++
 
 clean:
 		rm -f $(OBJ)

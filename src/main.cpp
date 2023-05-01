@@ -27,8 +27,12 @@ int main() {
     std::ofstream outFile("output.ppm");
     outFile << "P3\n" << WIDTH << " " << HEIGHT << "\n255\n";
 
+    float aspect_ratio = static_cast<float>(WIDTH) / static_cast<float>(HEIGHT);
+    float screen_height = 2.0;
+    float screen_width = screen_height * aspect_ratio;
+
     Math::Point3D cameraOrigin(0, 0, 0);
-    Math::Rectangle3D screen(Math::Point3D(-2, -1, -1), Math::Vector3D(4, 0, 0), Math::Vector3D(0, 2, 0));
+    Math::Rectangle3D screen(Math::Point3D(-screen_width/2, -screen_height/2, -1), Math::Vector3D(screen_width, 0, 0), Math::Vector3D(0, screen_height, 0));
     RayTracer::Camera camera(cameraOrigin, screen);
     RayTracer::Sphere sphere(Math::Point3D(0, 0, -3), 1);
 
