@@ -20,12 +20,12 @@ namespace RayTracer {
             Ray() : _origin(), _direction() {}
 
             Ray(const Math::Point3D &origin, const Math::Vector3D &direction)
-                : _origin(origin), _direction(direction) {}
+                : _origin(origin), _direction(direction.normalized()) {}
 
             Ray(const Ray &r)
-                : _origin(r._origin), _direction(r._direction) {}
+                : _origin(r._origin), _direction(r._direction.normalized()) {}
 
-            Ray(Ray &&r) : _origin(r._origin), _direction(r._direction) {
+            Ray(Ray &&r) : _origin(r._origin), _direction(r._direction.normalized()) {
                 r._origin = Math::Point3D();
                 r._direction = Math::Vector3D();
             }
@@ -37,7 +37,7 @@ namespace RayTracer {
             Ray &operator=(const Ray &r) {
                 if (this != &r) {
                     _origin = r._origin;
-                    _direction = r._direction;
+                    _direction = r._direction.normalized();
                 }
                 return *this;
             }
@@ -45,7 +45,7 @@ namespace RayTracer {
             Ray &operator=(Ray &&r) noexcept {
                 if (this != &r) {
                     _origin = r._origin;
-                    _direction = r._direction;
+                    _direction = r._direction.normalized();
                     r._origin = Math::Point3D();
                     r._direction = Math::Vector3D();
                 }
@@ -67,77 +67,7 @@ namespace RayTracer {
             }
 
             void setDirection(const Math::Vector3D &direction) {
-                _direction = direction;
-            }
-    };
-
-    class Sphere {
-        public:
-            //* Attributes
-            Math::Point3D _center;
-            double _radius;
-
-            //* Constructors
-            Sphere() : _center(), _radius(0) {}
-
-            Sphere(const Math::Point3D &center, double radius)
-                : _center(center), _radius(radius) {}
-
-            Sphere(const Sphere &s) : _center(s._center), _radius(s._radius) {}
-
-            Sphere(Sphere &&s) : _center(s._center), _radius(s._radius) {
-                s._center = Math::Point3D();
-                s._radius = 0;
-            }
-
-            //* Destructor
-            ~Sphere() = default;
-
-            //* Operators
-            Sphere &operator=(const Sphere &s) {
-                if (this != &s) {
-                    _center = s._center;
-                    _radius = s._radius;
-                }
-                return *this;
-            }
-
-            Sphere &operator=(Sphere &&s) noexcept {
-                if (this != &s) {
-                    _center = s._center;
-                    _radius = s._radius;
-                    s._center = Math::Point3D();
-                    s._radius = 0;
-                }
-                return *this;
-            }
-
-            //* Methods
-            bool hits (const Ray &ray) const {
-                Math::Vector3D oc = ray.getOrigin() - _center;
-                double a = ray.getDirection().dot(ray.getDirection());
-                double b = 2.0 * oc.dot(ray.getDirection());
-                double c = oc.dot(oc) - _radius * _radius;
-                double discriminant = b * b - 4 * a * c;
-                return (discriminant > 0);
-            }
-
-            //* Getters
-            const Math::Point3D &getCenter() const {
-                return _center;
-            }
-
-            double getRadius() const {
-                return _radius;
-            }
-
-            //* Setters
-            void setCenter(const Math::Point3D &center) {
-                _center = center;
-            }
-
-            void setRadius(double radius) {
-                _radius = radius;
+                _direction = direction.normalized();
             }
     };
 
