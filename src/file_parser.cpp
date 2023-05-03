@@ -32,6 +32,9 @@ int parse_file(char *filepath, Core *core)
         std::cout << "Camera rotation: " << static_cast<int>(rotation["x"]) << ", " << static_cast<int>(rotation["y"]) << ", " << static_cast<int>(rotation["z"]) << std::endl;
         std::cout << "Ambient light: " << static_cast<double>(lights["ambient"]) << std::endl;
         std::cout << "Diffuse light: " << static_cast<double>(lights["diffuse"]) << std::endl;
+        core->_camera.setWidth(static_cast<int>(resolution["width"]));
+        core->_camera.setHeight(static_cast<int>(resolution["height"]));
+        core->_camera.setOrigin(Math::Point3D(static_cast<int>(position["x"]), static_cast<int>(position["y"]), static_cast<int>(position["z"])));
 
         for (int i = 0; i < spheres.getLength(); ++i) {
             const libconfig::Setting& sphere = spheres[i];
