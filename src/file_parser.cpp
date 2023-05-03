@@ -8,6 +8,7 @@
 #include <libconfig.h++>
 #include <iostream>
 #include "core.hpp"
+#include "primitives.hpp"
 
 int parse_file(char *filepath, Core *core)
 {
@@ -38,6 +39,9 @@ int parse_file(char *filepath, Core *core)
 
         for (int i = 0; i < spheres.getLength(); ++i) {
             const libconfig::Setting& sphere = spheres[i];
+            Math::Point3D center = Math::Point3D(static_cast<int>(sphere["x"]), static_cast<int>(sphere["y"]), static_cast<int>(sphere["z"]));
+            double radius = static_cast<int>(sphere["r"]);
+            core->_primitives.push_back(new RayTracer::Sphere(center, radius));
             std::cout << "Sphere " << i + 1 << " center: (" << static_cast<int>(sphere["x"]) << ", " << static_cast<int>(sphere["y"]) << ", " << static_cast<int>(sphere["z"]) << ")" << std::endl
                       << "Sphere " << i + 1 << " radius: " << static_cast<int>(sphere["r"]) << std::endl;
         }
