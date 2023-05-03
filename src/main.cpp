@@ -62,6 +62,7 @@ Math::Vector3D color(const RayTracer::Ray& ray, const RayTracer::Sphere& sphere)
 
 int main(int ac, char **av)
 {
-    parse_file(av[1]);
+    Core core;
+    parse_file(av[1], &core);
     return (0);
 }

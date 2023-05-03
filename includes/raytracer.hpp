@@ -9,6 +9,8 @@
 
 #include "math.hpp"
 
+class Core;
+
 namespace RayTracer {
     class Ray {
         public:
@@ -76,6 +78,8 @@ namespace RayTracer {
             //* Attributes
             Math::Point3D _origin;
             Math::Rectangle3D _screen;
+            int _width;
+            int _height;
 
             //* Constructors
             Camera() : _origin(0, 0, 0), _screen() {}
@@ -129,6 +133,14 @@ namespace RayTracer {
                 return _screen;
             }
 
+            const int &getWidth() const {
+                return _width;
+            }
+
+            const int &getHeight() const {
+                return _height;
+            }
+
             //* Setters
             void setOrigin(const Math::Point3D &origin) {
                 _origin = origin;
@@ -137,7 +149,15 @@ namespace RayTracer {
             void setScreen(const Math::Rectangle3D &screen) {
                 _screen = screen;
             }
+
+            void setWidth(const int &width) {
+                _width = width;
+            }
+
+            void setHeight(const int &height) {
+                _height = height;
+            }
     };
 }
 
-int parse_file(char *filepath);
+int parse_file(char *filepath, Core *core);

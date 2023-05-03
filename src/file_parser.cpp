@@ -7,8 +7,9 @@
 
 #include <libconfig.h++>
 #include <iostream>
+#include "core.hpp"
 
-int parse_file(char *filepath)
+int parse_file(char *filepath, Core *core)
 {
     libconfig::Config cfg;
     try {
