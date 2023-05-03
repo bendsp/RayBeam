@@ -7,7 +7,6 @@
 
 #pragma once
 
-#include "raytracer.hpp"
 #include "primitives.hpp"
 #include <vector>
 

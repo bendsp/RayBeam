@@ -35,6 +35,7 @@ int parse_file(char *filepath, Core *core)
         core->_camera.setWidth(static_cast<int>(resolution["width"]));
         core->_camera.setHeight(static_cast<int>(resolution["height"]));
         core->_camera.setOrigin(Math::Point3D(static_cast<int>(position["x"]), static_cast<int>(position["y"]), static_cast<int>(position["z"])));
+        core->_camera.setFov(static_cast<double>(camera["fieldOfView"]));
 
         for (int i = 0; i < spheres.getLength(); ++i) {
             const libconfig::Setting& sphere = spheres[i];
