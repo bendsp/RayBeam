@@ -13,6 +13,7 @@
 
 class Core {
     public:
+        void display_scene(void);
         // * Getters
         const RayTracer::Camera &getCamera() {
             return _camera;
