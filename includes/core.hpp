@@ -29,7 +29,6 @@ class Core {
             _primitives.push_back(primitive);
         }
         // * Attributes
-    protected:
         RayTracer::Camera _camera;
         std::vector <RayTracer::IPrimitive *> _primitives;
 };
