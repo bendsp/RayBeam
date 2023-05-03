@@ -4,3 +4,4 @@ vgcore*
 .vscode/
 *.ppm
 *.png
+log

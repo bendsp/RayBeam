@@ -9,6 +9,7 @@
 #include <fstream>
 #include "raytracer.hpp"
 #include "primitives.hpp"
+#include "core.hpp"
 
 const int WIDTH = 800;
 const int HEIGHT = 200;
