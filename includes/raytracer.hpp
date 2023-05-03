@@ -80,6 +80,7 @@ namespace RayTracer {
             Math::Rectangle3D _screen;
             int _width;
             int _height;
+            double _fov; // TODO: add theses variables in the constructor
 
             //* Constructors
             Camera() : _origin(0, 0, 0), _screen() {}
@@ -141,6 +142,10 @@ namespace RayTracer {
                 return _height;
             }
 
+            const double &getFov() const {
+                return _fov;
+            }
+
             //* Setters
             void setOrigin(const Math::Point3D &origin) {
                 _origin = origin;
@@ -156,6 +161,10 @@ namespace RayTracer {
 
             void setHeight(const int &height) {
                 _height = height;
+            }
+
+            void setFov(const double &fov) {
+                _fov = fov;
             }
     };
 }

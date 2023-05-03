@@ -7,6 +7,7 @@
 
 SRC =	src/main.cpp \
 		src/file_parser.cpp \
+		src/scene.cpp \
 
 OBJ = $(SRC:.cpp=.o)
 

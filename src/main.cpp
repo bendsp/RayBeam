@@ -64,5 +64,6 @@ int main(int ac, char **av)
 {
     Core core;
     parse_file(av[1], &core);
+    core.display_scene();
     return (0);
 }

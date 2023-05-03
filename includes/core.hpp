@@ -7,12 +7,12 @@
 
 #pragma once
 
-#include "raytracer.hpp"
 #include "primitives.hpp"
 #include <vector>
 
 class Core {
     public:
+        void display_scene(void);
         // * Getters
         const RayTracer::Camera &getCamera() {
             return _camera;
