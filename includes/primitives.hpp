@@ -22,9 +22,11 @@ namespace RayTracer {
             IPrimitive() = default;
             virtual ~IPrimitive() = default;
 
-            virtual bool hits(const Ray &ray) const = 0;
             virtual RayTracer::RGB getColor() const = 0;
             virtual void displayPrimitive() const = 0;
+            virtual bool hits(const Ray &ray) const = 0;
+            virtual double getIntersectionDistance(const Ray &ray) const = 0;
+            virtual Math::Point3D getIntersectionPoint(const Ray &ray) const = 0;
     };
 
     class APrimitive : public IPrimitive {
@@ -100,6 +102,27 @@ namespace RayTracer {
                 double c = oc.dot(oc) - _radius * _radius;
                 double discriminant = b * b - 4 * a * c;
                 return (discriminant >= 0);
+            }
+
+            double getIntersectionDistance(const Ray &ray) const {
+                double a = ray.getDirection().dot(ray.getDirection());
+                double b = 2 * ray.getDirection().dot(ray.getOrigin() - _center);
+                double c = (_center - ray.getOrigin()).dot(_center - ray.getOrigin()) - _radius * _radius;
+                double discriminant = b * b - 4 * a * c;
+
+                if (discriminant < 0) {
+                    return false;
+                }
+
+                double t1 = (-b - std::sqrt(discriminant)) / (2 * a);
+                double t2 = (-b + std::sqrt(discriminant)) / (2 * a);
+                return (std::min(t1, t2));
+            }
+
+            Math::Point3D getIntersectionPoint(const Ray &ray) const {
+                double t = getIntersectionDistance(ray);
+                Math::Point3D point = ray.getOrigin() + ray.getDirection() * t;
+                return point;
             }
 
             void displayPrimitive() const {
