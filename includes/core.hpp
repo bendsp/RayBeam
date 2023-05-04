@@ -29,6 +29,7 @@ class Core {
         // * Methods
         void display_scene(void);
         RayTracer::RGB checkColisions(RayTracer::Ray ray);
+        RayTracer::RGB debugColisions(RayTracer::Ray ray);
         // * Attributes
         RayTracer::Camera _camera;
         std::vector <RayTracer::IPrimitive *> _primitives;
