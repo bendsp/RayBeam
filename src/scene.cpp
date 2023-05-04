@@ -73,4 +73,11 @@ void Core::display_scene(void) {
         std::cout << "Primitive " << i << " : " << std::endl;
         _primitives[i]->displayPrimitive();
     }
+
+    int nb_lights = _lights.size();
+    std::cout << "\n -- Number of lights : " << nb_lights << std::endl;
+    for (int i = 0; i < nb_lights; i++) {
+        std::cout << "Light " << i << " : " << std::endl;
+        _lights[i]->displayLight();
+    }
 }

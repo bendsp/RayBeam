@@ -30,12 +30,12 @@ int parse_file(char *filepath, Core *core)
         const libconfig::Setting &point_lights = lights["point"];
         const libconfig::Setting &directional_lights = lights["directional"];
 
-        std::cout << "Resolution width: " << static_cast<int>(resolution["width"]) << std::endl;
-        std::cout << "Resolution height: " << static_cast<int>(resolution["height"]) << std::endl;
-        std::cout << "Camera position: " << static_cast<int>(position["x"]) << ", " << static_cast<int>(position["y"]) << ", " << static_cast<int>(position["z"]) << std::endl;
-        std::cout << "Camera rotation: " << static_cast<int>(rotation["x"]) << ", " << static_cast<int>(rotation["y"]) << ", " << static_cast<int>(rotation["z"]) << std::endl;
-        std::cout << "Ambient light: " << static_cast<double>(lights["ambient"]) << std::endl;
-        std::cout << "Diffuse light: " << static_cast<double>(lights["diffuse"]) << std::endl;
+        // std::cout << "Resolution width: " << static_cast<int>(resolution["width"]) << std::endl;
+        // std::cout << "Resolution height: " << static_cast<int>(resolution["height"]) << std::endl;
+        // std::cout << "Camera position: " << static_cast<int>(position["x"]) << ", " << static_cast<int>(position["y"]) << ", " << static_cast<int>(position["z"]) << std::endl;
+        // std::cout << "Camera rotation: " << static_cast<int>(rotation["x"]) << ", " << static_cast<int>(rotation["y"]) << ", " << static_cast<int>(rotation["z"]) << std::endl;
+        // std::cout << "Ambient light: " << static_cast<double>(lights["ambient"]) << std::endl;
+        // std::cout << "Diffuse light: " << static_cast<double>(lights["diffuse"]) << std::endl;
         core->_camera.setWidth(static_cast<int>(resolution["width"]));
         core->_camera.setHeight(static_cast<int>(resolution["height"]));
         core->_camera.setOrigin(Math::Point3D(static_cast<int>(position["x"]), static_cast<int>(position["y"]), static_cast<int>(position["z"])));
@@ -49,9 +49,9 @@ int parse_file(char *filepath, Core *core)
             int r = static_cast<int>(color["r"]);
             int g = static_cast<int>(color["g"]);
             int b = static_cast<int>(color["b"]);
-            core->_primitives.push_back(new RayTracer::Sphere(center, radius, {r, g, b}));
-            std::cout << "Sphere " << i + 1 << " center: (" << static_cast<int>(sphere["x"]) << ", " << static_cast<int>(sphere["y"]) << ", " << static_cast<int>(sphere["z"]) << ")" << std::endl
-                      << "Sphere " << i + 1 << " radius: " << static_cast<int>(sphere["r"]) << std::endl;
+            core->addPrimitive(new RayTracer::Sphere(center, radius, {r, g, b}));
+            // std::cout << "Sphere " << i + 1 << " center: (" << static_cast<int>(sphere["x"]) << ", " << static_cast<int>(sphere["y"]) << ", " << static_cast<int>(sphere["z"]) << ")" << std::endl
+            //           << "Sphere " << i + 1 << " radius: " << static_cast<int>(sphere["r"]) << std::endl;
         }
 
         for (int i = 0; i < planes.getLength(); ++i) {
@@ -63,17 +63,25 @@ int parse_file(char *filepath, Core *core)
             int r = static_cast<int>(color["r"]);
             int g = static_cast<int>(color["g"]);
             int b = static_cast<int>(color["b"]);
-            core->_primitives.push_back(new RayTracer::Plane(position, axis, {r, g, b}));
-            std::cout << "Plane " << i + 1 << " axis: " << static_cast<std::string>(plane["axis"]) << std::endl
-              << "Plane " << i + 1 << " position: " << static_cast<int>(plane["position"]) << std::endl;
+            core->addPrimitive(new RayTracer::Plane(position, axis, {r, g, b}));
+            // std::cout << "Plane " << i + 1 << " axis: " << static_cast<std::string>(plane["axis"]) << std::endl
+            //   << "Plane " << i + 1 << " position: " << static_cast<int>(plane["position"]) << std::endl;
         }
 
+        double ambient = static_cast<double>(lights["ambient"]);
+        double diffuse = static_cast<double>(lights["diffuse"]);
 
         for (int i = 0; i < point_lights.getLength(); ++i) {
             const libconfig::Setting& point_light = point_lights[i];
-            std::cout << "Point light " << i + 1 << " position: (" << static_cast<int>(point_light["x"]) << ", " << static_cast<int>(point_light["y"]) << ", " << static_cast<int>(point_light["z"]) << ")" << std::endl;
+            int x = static_cast<int>(point_light["x"]);
+            int y = static_cast<int>(point_light["y"]);
+            int z = static_cast<int>(point_light["z"]);
+            Math::Point3D position = Math::Point3D(x, y, z);
+            core->addLight(new RayTracer::PointLight(position, ambient, diffuse));
+            // std::cout << "Point light " << i + 1 << " position: (" << static_cast<int>(point_light["x"]) << ", " << static_cast<int>(point_light["y"]) << ", " << static_cast<int>(point_light["z"]) << ")" << std::endl;
         }
 
+        // TODO: parse directional lights
         for (int i = 0; i < directional_lights.getLength(); ++i) {
             const libconfig::Setting& directional_light = directional_lights[i];
             std::cout << "Directional light " << i + 1 << " direction: (" << static_cast<int>(directional_light["x"]) << ", " << static_cast<int>(directional_light["y"]) << ", " << static_cast<int>(directional_light["z"]) << ")" << std::endl;

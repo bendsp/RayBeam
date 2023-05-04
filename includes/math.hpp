@@ -10,6 +10,7 @@
 #include <cmath>
 
 namespace Math {
+    //TODO: fix Vectors (add direction ?)
     class Vector3D {
         public:
             //* Attributes
