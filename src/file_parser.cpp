@@ -16,13 +16,16 @@ int parse_file(char *filepath, Core *core)
     try {
         cfg.readFile(filepath);
         const libconfig::Setting &root = cfg.getRoot();
+
         const libconfig::Setting &camera = root["camera"];
         const libconfig::Setting &resolution = camera["resolution"];
         const libconfig::Setting &position = camera["position"];
         const libconfig::Setting &rotation = camera["rotation"];
+
         const libconfig::Setting &primitives = root["primitives"];
         const libconfig::Setting &spheres = primitives["spheres"];
         const libconfig::Setting &planes = primitives["planes"];
+
         const libconfig::Setting &lights = root["lights"];
         const libconfig::Setting &point_lights = lights["point"];
         const libconfig::Setting &directional_lights = lights["directional"];
@@ -53,6 +56,14 @@ int parse_file(char *filepath, Core *core)
 
         for (int i = 0; i < planes.getLength(); ++i) {
             const libconfig::Setting& plane = planes[i];
+            std::string axisType = static_cast<std::string>(plane["axis"]);
+            RayTracer::Axis axis = (axisType == "x") ? RayTracer::X : (axisType == "y") ? RayTracer::Y : RayTracer::Z;
+            int position = static_cast<int>(plane["position"]);
+            libconfig::Setting& color = plane["color"];
+            int r = static_cast<int>(color["r"]);
+            int g = static_cast<int>(color["g"]);
+            int b = static_cast<int>(color["b"]);
+            core->_primitives.push_back(new RayTracer::Plane(position, axis, {r, g, b}));
             std::cout << "Plane " << i + 1 << " axis: " << static_cast<std::string>(plane["axis"]) << std::endl
               << "Plane " << i + 1 << " position: " << static_cast<int>(plane["position"]) << std::endl;
         }

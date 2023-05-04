@@ -27,6 +27,12 @@ namespace RayTracer {
         int b;
     } RGB;
 
+    enum Axis {
+        X,
+        Y,
+        Z
+    };
+
     class APrimitive : public IPrimitive {
         public:
             APrimitive() : _color({0, 0, 0}) {};
@@ -59,7 +65,8 @@ namespace RayTracer {
             Sphere(const Math::Point3D &center, double radius, RGB color)
                 : _center(center), _radius(radius), APrimitive(color) {}
 
-            Sphere(const Sphere &s) : _center(s._center), _radius(s._radius), APrimitive(s._color) {}
+            Sphere(const Sphere &s)
+                : _center(s._center), _radius(s._radius), APrimitive(s._color) {}
 
             Sphere(Sphere &&s) : _center(s._center), _radius(s._radius), APrimitive(s._color) {
                 s._center = Math::Point3D();
@@ -125,6 +132,89 @@ namespace RayTracer {
 
             void setRadius(double radius) {
                 _radius = radius;
+            }
+    };
+
+    class Plane : public APrimitive {
+        public:
+            //* Attributes
+            int _position;
+            Axis _axis;
+
+            //* Constructors
+            Plane() : _position(0), _axis(X), APrimitive({0, 0, 0}) {}
+
+            Plane(int position, Axis axis, RGB color)
+                : _position(position), _axis(axis), APrimitive(color) {}
+
+            Plane(const Plane &p)
+                : _position(p._position), _axis(p._axis), APrimitive(p._color) {}
+
+            Plane(Plane &&p) : _position(p._position), _axis(p._axis), APrimitive(p._color) {
+                p._position = 0;
+                p._axis = X;
+                p._color = {0, 0, 0};
+            }
+
+            //* Destructor
+            ~Plane() = default;
+
+            //* Operators
+            Plane &operator=(const Plane &p) {
+                if (this != &p) {
+                    _position = p._position;
+                    _axis = p._axis;
+                    _color = p._color;
+                }
+                return *this;
+            }
+
+            Plane &operator=(Plane &&p) noexcept {
+                if (this != &p) {
+                    _position = p._position;
+                    _axis = p._axis;
+                    _color = p._color;
+                    p._position = 0;
+                    p._axis = X;
+                    p._color = {0, 0, 0};
+                }
+                return *this;
+            }
+
+            //* Methods
+            bool hits(const Ray &ray) const {
+                // if (_axis == X)
+                //     return (ray.getOrigin().x == _position);
+                // else if (_axis == Y)
+                //     return (ray.getOrigin().y == _position);
+                // else
+                //     return (ray.getOrigin().z == _position);
+                return true;
+            }
+
+            void displayPrimitive() const {
+                std::cout << "[PLANE]" << std::endl;
+                std::cout << "Position : " << _position << std::endl;
+                std::cout << "Axis : " << _axis << std::endl;
+                std::cout << "Color : {" << _color.r << ", " << _color.g << ", " << _color.b << "}" << std::endl;
+            }
+
+            //* Getters
+            int getPosition() const {
+                return _position;
+            }
+
+            Axis getAxis() const {
+                return _axis;
+            }
+
+            //* Setters
+            void setPosition(int position) {
+                _position = position;
+            }
+
+            void setAxis(Axis axis) {
+                _axis = axis;
             }
     };
 }
