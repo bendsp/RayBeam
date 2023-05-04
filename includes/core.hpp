@@ -12,7 +12,6 @@
 
 class Core {
     public:
-        void display_scene(void);
         // * Getters
         const RayTracer::Camera &getCamera() {
             return _camera;
@@ -27,6 +26,9 @@ class Core {
         void addPrimitive(RayTracer::IPrimitive *primitive) {
             _primitives.push_back(primitive);
         }
+        // * Methods
+        void display_scene(void);
+        Math::Vector3D checkColisions(RayTracer::Ray ray);
         // * Attributes
         RayTracer::Camera _camera;
         std::vector <RayTracer::IPrimitive *> _primitives;
