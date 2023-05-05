@@ -176,6 +176,15 @@ namespace RayTracer {
                 return *this;
             }
 
+            //* Methods
+            void displayLight(void) const {
+                std::cout << "[DIRECTIONAL LIGHT]" << std::endl;
+                std::cout << "Position : {" << _position.x << ", " << _position.y << ", " << _position.z << "}" << std::endl;
+                std::cout << "Direction: {" << _direction.x << ", " << _direction.y << ", " << _direction.z << "}" << std::endl;
+                std::cout << "Ambient: " << _ambient << std::endl;
+                std::cout << "Diffuse: " << _diffuse << std::endl;
+            }
+
             //* Getters
             Math::Vector3D getDirection() const {
                 return _direction;

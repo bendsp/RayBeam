@@ -84,7 +84,17 @@ int parse_file(char *filepath, Core *core)
         // TODO: parse directional lights
         for (int i = 0; i < directional_lights.getLength(); ++i) {
             const libconfig::Setting& directional_light = directional_lights[i];
-            std::cout << "Directional light " << i + 1 << " direction: (" << static_cast<int>(directional_light["x"]) << ", " << static_cast<int>(directional_light["y"]) << ", " << static_cast<int>(directional_light["z"]) << ")" << std::endl;
+            int x = static_cast<int>(directional_light["x"]);
+            int y = static_cast<int>(directional_light["y"]);
+            int z = static_cast<int>(directional_light["z"]);
+            libconfig::Setting &direction = directional_light["direction"];
+            int dx = static_cast<int>(direction["x"]);
+            int dy = static_cast<int>(direction["y"]);
+            int dz = static_cast<int>(direction["z"]);
+            Math::Point3D position = Math::Point3D(x, y, z);
+            Math::Vector3D vecDirection = Math::Vector3D(dx, dy, dz);
+            core->addLight(new RayTracer::DirectionalLight(position, vecDirection, ambient, diffuse));
+            // std::cout << "Directional light " << i + 1 << " direction: (" << static_cast<int>(directional_light["x"]) << ", " << static_cast<int>(directional_light["y"]) << ", " << static_cast<int>(directional_light["z"]) << ")" << std::endl;
         }
 
     } catch (const libconfig::FileIOException &fioex) {

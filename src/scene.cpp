@@ -55,7 +55,7 @@ void Core::display_scene(void) {
 
     outFile.close();
     std::cout << "Rendering complete. Output saved to 'output.ppm'." << std::endl;
-    std::cout << "Camera : " << std::endl;
+    // std::cout << "Camera : " << std::endl;
     // std::cout << "Position : " << _camera._position << std::endl;
     // std::cout << "Direction : " << _camera._direction << std::endl;
     std::cout << "\n -- Camera --" << std::endl;
