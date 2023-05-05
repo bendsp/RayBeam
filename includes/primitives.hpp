@@ -224,7 +224,7 @@ namespace RayTracer {
                 return Math::Vector3D(axisVector.y * orthoVector.z - axisVector.z * orthoVector.y,
                           axisVector.z * orthoVector.x - axisVector.x * orthoVector.z,
                           axisVector.x * orthoVector.y - axisVector.y * orthoVector.x).normalized();
-            }           
+            }
 
             bool hits(const Ray &ray) const
             {
