@@ -15,9 +15,15 @@
 RayTracer::RGB Core::checkColisions(RayTracer::Ray ray)
 {
     RayTracer::RGB color{0, 0, 0};
+    int maxdistance = 0;
+    int distance = 0;
     for (int i = 0; i < _primitives.size(); i++) {
         if (_primitives[i]->hits(ray)) {
-            color = _primitives[i]->getColor();
+            distance = _primitives[i]->getIntersectionDistance(ray);
+            if (distance < maxdistance || maxdistance == 0) {
+                maxdistance = distance;
+                color = _primitives[i]->getColor();
+            }
         }
     }
     return color;
@@ -30,20 +36,19 @@ void Core::display_scene(void) {
     outFile << "P3\n" << width << " " << height << "\n255\n";
 
     float aspect_ratio = static_cast<float>(width) / static_cast<float>(height);
-    float screen_height = 2.0;
+    float screen_height = 4.0;
     float screen_width = screen_height * aspect_ratio;
 
     Math::Point3D cameraOrigin(0, 0, 0);
     Math::Rectangle3D screen(Math::Point3D(-screen_width/2, -screen_height/2, -1), Math::Vector3D(screen_width, 0, 0), Math::Vector3D(0, screen_height, 0));
-    RayTracer::Camera camera(cameraOrigin, screen);
+    // _camera = RayTracer::Camera(_camera.getOrigin(), screen);
 
-    for (int j = 0; j < height; ++j) {
+    for (int j = height - 1; j >= 0; --j) {
         for (int i = 0; i < width; ++i) {
             double u = double(i) / double(width);
             double v = double(j) / double(height);
-            RayTracer::Ray ray = camera.ray(u, v);
+            RayTracer::Ray ray = _camera.ray(u, v);
             RayTracer::RGB col = checkColisions(ray);
-            
 
             int ir = int(col.r);
             int ig = int(col.g);
@@ -68,7 +73,7 @@ void Core::display_scene(void) {
     std::cout << "Height : " << _camera._height << std::endl;
 
     int nb_prim = _primitives.size();
-    std::cout << "\n -- Number of primitives : " << nb_prim << std::endl;
+    std::cout << "\n -- Number of primitives : " << _primitives.size() << std::endl;
     for (int i = 0; i < nb_prim; i++) {
         std::cout << "Primitive " << i << " : " << std::endl;
         _primitives[i]->displayPrimitive();
