@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2022
 ** raytracer
 ** File description:
-** display_scene.cpp
+** displayScene.cpp
 */
 
 #include "core.hpp"
@@ -29,7 +29,7 @@ RayTracer::RGB Core::checkColisions(RayTracer::Ray ray)
     return color;
 }
 
-void Core::display_scene(void) {
+void Core::displayScene(void) {
     int width = this->_camera._width;
     int height = this->_camera._height;
     std::ofstream outFile("output.ppm");

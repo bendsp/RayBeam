@@ -36,7 +36,7 @@ class Core {
         }
 
         // * Methods
-        void display_scene(void);
+        void displayScene(void);
         RayTracer::RGB checkColisions(RayTracer::Ray ray);
 
         // * Attributes

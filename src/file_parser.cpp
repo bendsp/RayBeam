@@ -11,8 +11,7 @@
 #include "core.hpp"
 #include "primitives.hpp"
 
-//TODO: CAMEL CASE FOR EVERY FUNCTION
-void parse_camera(const libconfig::Setting &root, Core *core)
+void parseCamera(const libconfig::Setting &root, Core *core)
 {
     const libconfig::Setting &camera = root["camera"];
     const libconfig::Setting &resolution = camera["resolution"];
@@ -25,7 +24,7 @@ void parse_camera(const libconfig::Setting &root, Core *core)
     core->_camera.setFov(static_cast<double>(camera["fieldOfView"]));
 }
 
-void parse_primitives(const libconfig::Setting &root, Core *core)
+void parsePrimitives(const libconfig::Setting &root, Core *core)
 {
     const libconfig::Setting &primitives = root["primitives"];
     const libconfig::Setting &spheres = primitives["spheres"];
@@ -66,7 +65,7 @@ void parse_primitives(const libconfig::Setting &root, Core *core)
     }
 }
 
-void parse_lights(const libconfig::Setting &root, Core *core)
+void parseLights(const libconfig::Setting &root, Core *core)
 {
     const libconfig::Setting &lights = root["lights"];
     const libconfig::Setting &point_lights = lights["point"];
@@ -99,16 +98,16 @@ void parse_lights(const libconfig::Setting &root, Core *core)
     }
 }
 
-int parse_file(char *filepath, Core *core)
+int parseFile(char *filepath, Core *core)
 {
     libconfig::Config cfg;
     try {
         cfg.readFile(filepath);
         const libconfig::Setting &root = cfg.getRoot();
 
-        parse_camera(root, core);
-        parse_primitives(root, core);
-        parse_lights(root, core);
+        parseCamera(root, core);
+        parsePrimitives(root, core);
+        parseLights(root, core);
 
     } catch (const libconfig::FileIOException &fioex) {
         throw Core::CoreException("I/O error while reading file.");

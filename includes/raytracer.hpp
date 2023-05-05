@@ -169,4 +169,4 @@ namespace RayTracer {
     };
 }
 
-int parse_file(char *filepath, Core *core);
+int parseFile(char *filepath, Core *core);
