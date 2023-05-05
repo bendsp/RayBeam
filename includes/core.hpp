@@ -23,6 +23,7 @@ class Core {
         const std::vector <RayTracer::ILight *> &getLights() {
             return _lights;
         }
+
         // * Setters / Adders
         void setCamera(const RayTracer::Camera &camera) {
             _camera = camera;
@@ -33,11 +34,25 @@ class Core {
         void addLight(RayTracer::ILight *light) {
             _lights.push_back(light);
         }
+
         // * Methods
         void display_scene(void);
         RayTracer::RGB checkColisions(RayTracer::Ray ray);
+
         // * Attributes
         RayTracer::Camera _camera;
         std::vector <RayTracer::IPrimitive *> _primitives;
         std::vector <RayTracer::ILight *> _lights;
+
+        //* Exception
+        class CoreException : public std::exception {
+            public:
+                CoreException(std::string const &message) : _message(message) {};
+                virtual ~CoreException() throw() {};
+                virtual const char *what() const throw() {
+                    return _message.c_str();
+                };
+            private:
+                std::string _message;
+        };
 };
