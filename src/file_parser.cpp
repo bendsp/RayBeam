@@ -11,6 +11,11 @@
 #include "core.hpp"
 #include "primitives.hpp"
 
+double toRadians(double degrees)
+{
+    return degrees * (3.14159265358979323846 / 180.0);
+}
+
 void parseCamera(const libconfig::Setting &root, Core *core)
 {
     const libconfig::Setting &camera = root["camera"];
