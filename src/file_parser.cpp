@@ -7,15 +7,11 @@
 
 #include <libconfig.h++>
 #include <iostream>
+#include <unordered_map>
 #include "core.hpp"
 #include "primitives.hpp"
 
-double toRadians(double degrees)
-{
-    return degrees * (3.14159265358979323846 / 180.0);
-}
-
-void parse_camera(const libconfig::Setting &root, Core *core)
+void parseCamera(const libconfig::Setting &root, Core *core)
 {
     const libconfig::Setting &camera = root["camera"];
     const libconfig::Setting &resolution = camera["resolution"];
@@ -39,7 +35,7 @@ void parse_camera(const libconfig::Setting &root, Core *core)
     core->_camera.setScreen(screen);
 }
 
-void parse_primitives(const libconfig::Setting &root, Core *core)
+void parsePrimitives(const libconfig::Setting &root, Core *core)
 {
     const libconfig::Setting &primitives = root["primitives"];
     const libconfig::Setting &spheres = primitives["spheres"];
@@ -56,10 +52,21 @@ void parse_primitives(const libconfig::Setting &root, Core *core)
         core->addPrimitive(new RayTracer::Sphere(center, radius, {r, g, b}));
     }
 
+    static std::unordered_map<std::string, RayTracer::Axis> axisMap = {
+        {"X", RayTracer::X},
+        {"Y", RayTracer::Y},
+        {"Z", RayTracer::Z},
+        {"x", RayTracer::X},
+        {"y", RayTracer::Y},
+        {"z", RayTracer::Z}
+    };
+
     for (int i = 0; i < planes.getLength(); ++i) {
         const libconfig::Setting& plane = planes[i];
         std::string axisType = static_cast<std::string>(plane["axis"]);
-        RayTracer::Axis axis = (axisType == "x") ? RayTracer::X : (axisType == "y") ? RayTracer::Y : RayTracer::Z;
+        RayTracer::Axis axis = axisMap[axisType];
+        if (axis == 0)
+            throw Core::CoreException("Invalid axis type");
         int position = static_cast<int>(plane["position"]);
         libconfig::Setting& color = plane["color"];
         int r = static_cast<int>(color["r"]);
@@ -69,7 +76,7 @@ void parse_primitives(const libconfig::Setting &root, Core *core)
     }
 }
 
-void parse_lights(const libconfig::Setting &root, Core *core)
+void parseLights(const libconfig::Setting &root, Core *core)
 {
     const libconfig::Setting &lights = root["lights"];
     const libconfig::Setting &point_lights = lights["point"];
@@ -102,16 +109,16 @@ void parse_lights(const libconfig::Setting &root, Core *core)
     }
 }
 
-int parse_file(char *filepath, Core *core)
+int parseFile(char *filepath, Core *core)
 {
     libconfig::Config cfg;
     try {
         cfg.readFile(filepath);
         const libconfig::Setting &root = cfg.getRoot();
 
-        parse_camera(root, core);
-        parse_primitives(root, core);
-        parse_lights(root, core);
+        parseCamera(root, core);
+        parsePrimitives(root, core);
+        parseLights(root, core);
 
     } catch (const libconfig::FileIOException &fioex) {
         throw Core::CoreException("I/O error while reading file.");
