@@ -268,6 +268,22 @@ namespace RayTracer {
                 return Math::Point3D();
             }
 
+            double getIntersectionDistance(const Ray &ray) const {
+                return 0;
+            }
+
+            Math::Point3D getIntersectionPoint(const Ray &ray) const {
+                return Math::Point3D();
+            }
+
+            double getIntersectionDistance(const Ray &ray) const {
+                return 0;
+            }
+
+            Math::Point3D getIntersectionPoint(const Ray &ray) const {
+                return Math::Point3D();
+            }
+
             void displayPrimitive() const{
                 std::cout << "[PLANE]" << std::endl;
                 std::cout << "Position : " << _position << std::endl;

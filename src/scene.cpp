@@ -60,7 +60,7 @@ void Core::display_scene(void) {
 
     outFile.close();
     std::cout << "Rendering complete. Output saved to 'output.ppm'." << std::endl;
-    std::cout << "Camera : " << std::endl;
+    // std::cout << "Camera : " << std::endl;
     // std::cout << "Position : " << _camera._position << std::endl;
     // std::cout << "Direction : " << _camera._direction << std::endl;
     std::cout << "\n -- Camera --" << std::endl;
@@ -77,5 +77,12 @@ void Core::display_scene(void) {
     for (int i = 0; i < nb_prim; i++) {
         std::cout << "Primitive " << i << " : " << std::endl;
         _primitives[i]->displayPrimitive();
+    }
+
+    int nb_lights = _lights.size();
+    std::cout << "\n -- Number of lights : " << nb_lights << std::endl;
+    for (int i = 0; i < nb_lights; i++) {
+        std::cout << "Light " << i << " : " << std::endl;
+        _lights[i]->displayLight();
     }
 }

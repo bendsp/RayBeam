@@ -14,7 +14,13 @@
 int main(int ac, char **av)
 {
     Core core;
-    parse_file(av[1], &core);
-    core.display_scene();
+    try {
+        parse_file(av[1], &core);
+        core.display_scene();
+    } catch (Core::CoreException &e) {
+        std::cerr << e.what() << std::endl;
+        return (84);
+    }
+
     return (0);
 }
