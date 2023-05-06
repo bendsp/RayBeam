@@ -105,7 +105,7 @@ namespace RayTracer {
             bool hits(const Ray &ray) const{
                 Math::Vector3D oc = ray.getOrigin() - _center;
                 double a = ray.getDirection().dot(ray.getDirection());
-                double b =  oc.dot(ray.getDirection());
+                double b = 2.0 * oc.dot(ray.getDirection());
                 double c = oc.dot(oc) - _radius * _radius;
                 double discriminant = b * b - 4 * a * c;
                 return (discriminant >= 0);
