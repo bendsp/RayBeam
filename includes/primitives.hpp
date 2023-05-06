@@ -18,7 +18,7 @@ namespace RayTracer {
     } RGB;
 
     enum Axis {
-        X,
+        X = 1,
         Y,
         Z
     };
@@ -276,7 +276,7 @@ namespace RayTracer {
             bool hits(const Ray &ray) const{
                 Math::Vector3D oc = ray.getOrigin() - _center;
                 double a = ray.getDirection().dot(ray.getDirection());
-                double b =  oc.dot(ray.getDirection());
+                double b = 2.0 * oc.dot(ray.getDirection());
                 double c = oc.dot(oc) - _radius * _radius;
                 double discriminant = b * b - 4 * a * c;
                 return (discriminant >= 0);
@@ -395,7 +395,7 @@ namespace RayTracer {
                 return Math::Vector3D(axisVector.y * orthoVector.z - axisVector.z * orthoVector.y,
                           axisVector.z * orthoVector.x - axisVector.x * orthoVector.z,
                           axisVector.x * orthoVector.y - axisVector.y * orthoVector.x).normalized();
-            }           
+            }
 
             bool hits(const Ray &ray) const
             {

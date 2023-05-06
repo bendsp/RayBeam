@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2022
 ** raytracer
 ** File description:
-** display_scene.cpp
+** displayScene.cpp
 */
 
 #include "core.hpp"
@@ -15,12 +15,13 @@
 RayTracer::RGB Core::checkColisions(RayTracer::Ray ray)
 {
     RayTracer::RGB color{0, 0, 0};
-    int maxdistance = 0;
-    int distance = 0;
+    float maxdistance = std::numeric_limits<float>::max(); // Changed from int to float, and initialized with the maximum float value
+    float distance = 0; // Changed from int to float
     for (int i = 0; i < _primitives.size(); i++) {
         if (_primitives[i]->hits(ray)) {
+            std::cout << "Hit primitive " << i << " with distance " << distance << std::endl;
             distance = _primitives[i]->getIntersectionDistance(ray);
-            if (distance < maxdistance || maxdistance == 0) {
+            if (distance < maxdistance) { // Removed the condition where maxdistance == 0
                 maxdistance = distance;
                 color = _primitives[i]->getColor();
             }
@@ -29,19 +30,11 @@ RayTracer::RGB Core::checkColisions(RayTracer::Ray ray)
     return color;
 }
 
-void Core::display_scene(void) {
+void Core::displayScene(void) {
     int width = this->_camera._width;
     int height = this->_camera._height;
     std::ofstream outFile("output.ppm");
     outFile << "P3\n" << width << " " << height << "\n255\n";
-
-    float aspect_ratio = static_cast<float>(width) / static_cast<float>(height);
-    float screen_height = 4.0;
-    float screen_width = screen_height * aspect_ratio;
-
-    Math::Point3D cameraOrigin(0, 0, 0);
-    Math::Rectangle3D screen(Math::Point3D(-screen_width/2, -screen_height/2, -1), Math::Vector3D(screen_width, 0, 0), Math::Vector3D(0, screen_height, 0));
-    // _camera = RayTracer::Camera(_camera.getOrigin(), screen);
 
     for (int j = height - 1; j >= 0; --j) {
         for (int i = 0; i < width; ++i) {
