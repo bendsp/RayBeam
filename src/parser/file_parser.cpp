@@ -16,7 +16,7 @@ void parseCamera(const libconfig::Setting &root, Core *core)
     const libconfig::Setting &rotation = camera["rotation"];
 
     // set camera properties
-    double fov = static_cast<double>(camera["fieldOfView"]);
+    double fov = (static_cast<double>(camera["fieldOfView"]) * (M_PI / 180));
     Math::Vector3D direction = Math::Vector3D(static_cast<double>(rotation["x"]), static_cast<double>(rotation["y"]), static_cast<double>(rotation["z"]));
     core->_camera.setDirection(direction.normalized());
     core->_camera.setWidth(static_cast<int>(resolution["width"]));
@@ -31,13 +31,12 @@ void parseCamera(const libconfig::Setting &root, Core *core)
     float horizontal_fov = 2.0f * atan(tan(0.5f * fov) * aspect_ratio);
     float horizontal_distance = 0.5f * core->_camera.getWidth() / tan(0.5f * horizontal_fov);
     float distance = 0.5f * (horizontal_distance + vertical_distance);
-    
+    Math::Vector3D rightVector = math.crossProduct(core->_camera.getDirection(), Math::Vector3D(0, 1, 0)).normalized();
+    Math::Vector3D upVector = math.crossProduct(rightVector, core->_camera.getDirection()).normalized();
+
     core->_camera.setDistanceToScreen(distance);
-    Math::Vector3D rightVector = math.crossProduct(core->_camera.getDirection(), Math::Vector3D(0, 1, 0));
-    Math::Vector3D upVector = math.crossProduct(rightVector, core->_camera.getDirection());
     core->_camera.setRight(rightVector);
     core->_camera.setUp(upVector);
-
     // calculate screen center
     Math::Vector3D cameraOriginVec(core->_camera.getOrigin());
     Math::Vector3D screenCenterVec = cameraOriginVec + (core->_camera.getDirection() * core->_camera.getDistanceToScreen());

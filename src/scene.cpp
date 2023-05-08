@@ -57,10 +57,17 @@
 
 RayTracer::RGB Core::checkColisions(RayTracer::Ray ray)
 {
+    float maxdistance = std::numeric_limits<float>::max();
+    float distance = 0;
     RayTracer::RGB color{0, 0, 0};
     for (int i = 0; i < _primitives.size(); i++) {
         if (_primitives[i]->hits(ray)) {
-            color = _primitives[i]->getColor();
+            // std::cout << "Hit primitive " << i << " with distance " << _primitives[i]->getIntersectionDistance(ray) << std::endl;
+            distance = _primitives[i]->getIntersectionDistance(ray);
+            if (distance < maxdistance) { // Removed the condition where maxdistance == 0
+                maxdistance = distance;
+                color = _primitives[i]->getColor();
+            }
         }
     }
     return color;
@@ -75,8 +82,8 @@ void Core::displayScene(void) {
     double height3D = width3D / (aspectRatio);
     Math::Vector3D right_vector = _camera.getRight();
     Math::Vector3D up_vector = _camera.getUp();
-    Math::Vector3D horizontal_step = _camera.getRight() * (width3D / width);
-    Math::Vector3D vertical_step = _camera.getUp() * (height3D / height);
+    Math::Vector3D horizontal_step = _camera.getRight() * (width3D / (width - 1));
+    Math::Vector3D vertical_step = _camera.getUp() * (height3D / (height - 1));
     Math::Vector3D rayDirection;
     Math::Point3D camera_origin = _camera.getOrigin();
     Math::Point3D screen_center = _camera.getScreenCenter();
