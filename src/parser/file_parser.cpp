@@ -58,5 +58,7 @@ int parseFile(char *filepath, Core *core)
     catch (const libconfig::SettingTypeException &stex) {
         throw Core::CoreException("Setting type error at " + std::string(stex.getPath()) + " - " + stex.what());
     }
+    catch (const libconfig::SettingNotFoundException &nfex) {
+    }
     return (0);
 }

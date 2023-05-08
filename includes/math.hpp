@@ -9,7 +9,11 @@
 
 #include <cmath>
 
-namespace Math {
+class Math {
+    public:
+        class Vector3D;
+        class Point3D;
+        class Rectangle3D;
     class Vector3D {
         public:
             //* Attributes
@@ -68,6 +72,8 @@ namespace Math {
                 return Vector3D(x - v.x, y - v.y, z - v.z);
             }
 
+
+
             Vector3D &operator-=(const Vector3D &v) {
                 x -= v.x;
                 y -= v.y;
@@ -96,6 +102,10 @@ namespace Math {
                 z /= v.z;
                 return *this;
             }
+            
+            Vector3D operator=(const Point3D &p) {
+                return Vector3D(p.x, p.y, p.z);
+            }
 
             Vector3D operator*(double f) const {
                 return Vector3D(x * f, y * f, z * f);
@@ -118,6 +128,11 @@ namespace Math {
                 z /= f;
                 return *this;
             }
+
+            Vector3D operator-(const Math::Point3D &p) {
+                return Vector3D(x - p.x, y - p.y, z - p.z);
+            }
+
 
             //* Methods
             double dot(const Vector3D &v) const {
@@ -214,6 +229,17 @@ namespace Math {
 
             Point3D operator-(const Point3D &p1) {
                 return Point3D(x - p1.x, y - p1.y, z - p1.z);
+            }
+
+            Point3D operator+(const Point3D &p1) {
+                return Point3D(x + p1.x, y + p1.y, z + p1.z);
+            }
+
+            Point3D &operator=(const Vector3D &v) {
+                x = v.x;
+                y = v.y;
+                z = v.z;
+                return *this;
             }
 
             Point3D &operator+=(const Vector3D &v) {
@@ -339,4 +365,4 @@ namespace Math {
                 _left_side = left_side;
             }
     };
-}
+};
