@@ -91,7 +91,7 @@ namespace RayTracer {
                 }
                 return *this;
             }
-
+// caca
             Cone &operator=(Cone &&c) noexcept{
                 if (this != &c) {
                     _base = c._base;

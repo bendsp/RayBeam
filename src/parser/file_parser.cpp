@@ -19,13 +19,16 @@ void parseCamera(const libconfig::Setting &root, Core *core)
     const libconfig::Setting &position = camera["position"];
     const libconfig::Setting &rotation = camera["rotation"];
 
-    core->_camera.setDistanceToScreen(1.0);
+    double fov = static_cast<double>(camera["fieldOfView"]);
     core->_camera.setDirection(Math::Vector3D(static_cast<int>(rotation["x"]), static_cast<int>(rotation["y"]), static_cast<int>(rotation["z"])));
     core->_camera.setWidth(static_cast<int>(resolution["width"]));
     core->_camera.setHeight(static_cast<int>(resolution["height"]));
     core->_camera.setOrigin(Math::Point3D(static_cast<int>(position["x"]), static_cast<int>(position["y"]), static_cast<int>(position["z"])));
-    core->_camera.setFov(static_cast<double>(camera["fieldOfView"]));
-
+    core->_camera.setFov(fov);
+    
+    double distance = 0.5 * core->_camera.getWidth() / tan(0.5 * fov);
+    core->_camera.setDistanceToScreen(distance);
+    std::cout << "Distance to screen : " << distance << std::endl;
     double halfScreenHeight = tan(toRadians(core->_camera.getFov() / 2.0)) * core->_camera.getDistanceToScreen();
     float aspect_ratio = static_cast<float>(core->_camera.getWidth()) / static_cast<float>(core->_camera.getHeight());
     double screen_height = 2.0 * halfScreenHeight;
