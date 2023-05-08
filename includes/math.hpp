@@ -207,6 +207,24 @@ namespace Math {
                 return Point3D(x + v.x, y + v.y, z + v.z);
             }
 
+            Point3D operator-(const Point3D &p1) {
+                return Point3D(x - p1.x, y - p1.y, z - p1.z);
+            }
+
+            Point3D &operator+=(const Vector3D &v) {
+                x += v.x;
+                y += v.y;
+                z += v.z;
+                return *this;
+            }
+
+            Point3D &operator-=(const Vector3D &v) {
+                x -= v.x;
+                y -= v.y;
+                z -= v.z;
+                return *this;
+            }
+
             friend Vector3D operator-(const Point3D p1, const Point3D p2) {
                 return Vector3D(p1.x - p2.x, p1.y - p2.y, p1.z - p2.z);
             }
