@@ -35,7 +35,8 @@ void parseCamera(const libconfig::Setting &root, Core *core)
     // calculate screen center
     Math::Vector3D cameraOriginVec(core->_camera.getOrigin());
     Math::Vector3D screenCenterVec = cameraOriginVec + (core->_camera.getDirection() * core->_camera.getDistanceToScreen());
-    Math::Point3D screenCenter = screenCenterVec.toPoint(); // Assuming you have the 'toPoint()' function in your Vector3D class
+    Math::Point3D screenCenter = screenCenterVec.toPoint();
+    core->_camera.setScreenCenter(screenCenter);
 
     
 }
