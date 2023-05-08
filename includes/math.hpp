@@ -145,6 +145,8 @@ class Math {
 
             Vector3D normalized() const {
                 double magnitude = std::sqrt(x * x + y * y + z * z);
+                if (magnitude == 0)
+                    return Vector3D(0, 0, 0);
                 return Vector3D(x / magnitude, y / magnitude, z / magnitude);
             }
 
@@ -174,12 +176,6 @@ class Math {
                 this->z = z;
             }
     };
-    Vector3D cross(const Vector3D &v1, const Vector3D &v2)
-    {
-        return Vector3D(v1.y * v2.z - v1.z * v2.y,
-                        v1.z * v2.x - v1.x * v2.z,
-                        v1.x * v2.y - v1.y * v2.x);
-    }
     class Point3D {
         public:
             //* Attributes
@@ -287,84 +283,6 @@ class Math {
             }
     };
 
-    class Rectangle3D {
-        public:
-            //* Attributes
-            Point3D _origin;
-            Vector3D _bottom_side;
-            Vector3D _left_side;
-
-            //* Constructors
-            Rectangle3D() : _origin(), _bottom_side(), _left_side() {}
-
-            Rectangle3D(const Point3D &origin, const Vector3D &bottom_side, const Vector3D &left_side)
-                : _origin(origin), _bottom_side(bottom_side), _left_side(left_side) {}
-
-            Rectangle3D(const Rectangle3D &r)
-                : _origin(r._origin), _bottom_side(r._bottom_side), _left_side(r._left_side) {}
-
-            Rectangle3D(Rectangle3D &&r) noexcept : _origin(r._origin), _bottom_side(r._bottom_side), _left_side(r._left_side) {
-                r._origin = Point3D();
-                r._bottom_side = Vector3D();
-                r._left_side = Vector3D();
-            }
-
-            //* Destructor
-            ~Rectangle3D() = default;
-
-            //* Operators
-            Rectangle3D &operator=(const Rectangle3D &r) {
-                if (this != &r) {
-                    _origin = r._origin;
-                    _bottom_side = r._bottom_side;
-                    _left_side = r._left_side;
-                }
-                return *this;
-            }
-
-            Rectangle3D &operator=(Rectangle3D &&r) noexcept {
-                if (this != &r) {
-                    _origin = r._origin;
-                    _bottom_side = r._bottom_side;
-                    _left_side = r._left_side;
-                    r._origin = Point3D();
-                    r._bottom_side = Vector3D();
-                    r._left_side = Vector3D();
-                }
-                return *this;
-            }
-
-            //* Methods
-            Point3D pointAt(double u, double v) const {
-                return _origin + _bottom_side * u + _left_side * v;
-            }
-
-            //* Getters
-            Point3D getOrigin() const {
-                return _origin;
-            }
-
-            Vector3D getBottomSide() const {
-                return _bottom_side;
-            }
-
-            Vector3D getLeftSide() const {
-                return _left_side;
-            }
-
-            //* Setters
-            void setOrigin(const Point3D &origin) {
-                _origin = origin;
-            }
-
-            void setBottomSide(const Vector3D &bottom_side) {
-                _bottom_side = bottom_side;
-            }
-
-            void setLeftSide(const Vector3D &left_side) {
-                _left_side = left_side;
-            }
-    };
     Vector3D crossProduct(const Vector3D &v1, const Vector3D &v2)
     {
         return Vector3D(v1.y * v2.z - v1.z * v2.y,

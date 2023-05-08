@@ -58,21 +58,6 @@
 RayTracer::RGB Core::checkColisions(RayTracer::Ray ray)
 {
     RayTracer::RGB color{0, 0, 0};
-    float maxdistance = std::numeric_limits<float>::max(); // Changed from int to float, and initialized with the maximum float value
-    float distance = 0; // Changed from int to float
-    for (int i = 0; i < _primitives.size(); i++) {
-        //printf("Ray origin: %f %f %f\n", ray._origin.x, ray._origin.y, ray._origin.z);
-        //printf("Ray direction: %f %f %f\n", ray._direction.x, ray._direction.y, ray._direction.z);
-        ray._direction.z = 100;
-        if (_primitives[i]->hits(ray)) {
-            distance = _primitives[i]->getIntersectionDistance(ray);
-            if (distance < maxdistance) { // Removed the condition where maxdistance == 0
-                maxdistance = distance;
-                color = _primitives[i]->getColor();
-            }
-            std::cout << "Hit primitive " << i << " with distance " << distance << std::endl;
-        }
-    }
     return color;
 }
 
@@ -83,26 +68,7 @@ void Core::displayScene(void) {
     std::ofstream outFile("output.ppm");
     outFile << "P3\n" << this->_camera._width << " " << this->_camera._height << "\n255\n";
 
-    for (int x = 0; x < this->_camera._width; ++x) {
-        for (int y = 0; y < this->_camera._height; ++y) {
-            float u = float(x) / float(this->_camera._width);
-            float v = float(y) / float(this->_camera._height);
-            Math::Point3D bL = this->_camera._origin + this->_camera._screen._origin + bottomLeftLocal;
-            Math::Vector3D bottomLeft = Math::Vector3D(bL.x, bL.y, bL.z);
-            Math::Vector3D right = this->_camera._screen._bottom_side * planeWidth;
-            Math::Vector3D up = this->_camera._screen._left_side * planeHeight;
-            Math::Vector3D point = bottomLeft + right * u + up * v;
-            Math::Vector3D direction = point - this->_camera._origin;
-            RayTracer::Ray ray = RayTracer::Ray(this->_camera._origin, direction);
-            RayTracer::RGB col = checkColisions(ray);
-
-            // TODO : Check direction z qui varie alors quil ne devrait pas
-            int ir = int(col.r);
-            int ig = int(col.g);
-            int ib = int(col.b);
-
-            outFile << ir << " " << ig << " " << ib << "\n";
-        }
-    }
+    // TODO: render loop
+    outFile.close();
     return;
 }

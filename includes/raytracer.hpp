@@ -78,24 +78,23 @@ namespace RayTracer {
             //* Attributes
             Math::Point3D _origin;
             Math::Vector3D _direction;
-            Math::Rectangle3D _screen;
+            Math::Vector3D _up;
+            Math::Vector3D _right;
             double _distanceToScreen;
             int _width;
             int _height;
-            double _fov; // TODO: add theses variables in the constructor
-
-            //* Constructors
-            Camera() : _origin(0, 0, 0), _direction(0, 0, 0), _screen() {}
+            double _fov;
             
-            Camera(const Math::Point3D &origin, const Math::Rectangle3D &screen, const Math::Vector3D &direction, double distanceToScreen, double fov)
-                : _origin(origin), _screen(screen), _direction(direction.normalized()), _distanceToScreen(distanceToScreen), _fov(fov) {}
-            // TODO UPDATE CONSTRUCTORS
-            Camera(const Camera &c)
-                : _origin(c._origin), _screen(c._screen), _direction(c._direction) {}
+            //* Constructors
+            Camera() : _origin(0, 0, 0), _direction(0, 0, 0) {}
 
-            Camera(Camera &&c) : _origin(c._origin), _screen(c._screen), _direction(c._direction) {
+            Camera(const Math::Point3D &origin, const Math::Rectangle3D &screen, const Math::Vector3D &direction, double distanceToScreen, double fov)
+                : _origin(origin), _direction(direction.normalized()), _distanceToScreen(distanceToScreen), _fov(fov) {}
+            Camera(const Camera &c)
+                : _origin(c._origin), _direction(c._direction) {}
+
+            Camera(Camera &&c) : _origin(c._origin), _direction(c._direction) {
                 c._origin = Math::Point3D();
-                c._screen = Math::Rectangle3D();
                 c._direction = Math::Vector3D();
             }
 
@@ -106,7 +105,6 @@ namespace RayTracer {
             Camera &operator=(const Camera &c) {
                 if (this != &c) {
                     _origin = c._origin;
-                    _screen = c._screen;
                     _direction = c._direction;
                     _distanceToScreen = c._distanceToScreen;
                     _width = c._width;
@@ -119,20 +117,19 @@ namespace RayTracer {
             Camera &operator=(Camera &&c) noexcept {
                 if (this != &c) {
                     _origin = c._origin;
-                    _screen = c._screen;
                     _direction = c._direction;
                     _distanceToScreen = c._distanceToScreen;
                     _width = c._width;
                     _height = c._height;
                     _fov = c._fov;
                     c._origin = Math::Point3D();
-                    c._screen = Math::Rectangle3D();
                     c._direction = Math::Vector3D();
                 }
                 return *this;
             }
 
-            //* Methods
+            //* Methods 
+            // TODO: CHANGE THIS!
             RayTracer::Ray ray(double u, double v) const {
                 RayTracer::Ray ray;
                 return ray;
@@ -141,10 +138,6 @@ namespace RayTracer {
             //* Getters
             const Math::Point3D &getOrigin() const {
                 return _origin;
-            }
-
-            const Math::Rectangle3D &getScreen() const {
-                return _screen;
             }
 
             const Math::Vector3D &getDirection() const {
@@ -170,10 +163,6 @@ namespace RayTracer {
             //* Setters
             void setOrigin(const Math::Point3D &origin) {
                 _origin = origin;
-            }
-
-            void setScreen(const Math::Rectangle3D &screen) {
-                _screen = screen;
             }
 
             void setDirection(const Math::Vector3D &direction) {
