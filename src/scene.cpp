@@ -70,8 +70,9 @@ void Core::displayScene(void) {
     
     int width = _camera._width;
     int height = _camera._height;
+    double aspectRatio = static_cast<float>(width) / static_cast<float>(height);
     double width3D = 2 * _camera.getDistanceToScreen() * tan(0.5 * _camera.getFov());
-    double height3D = width3D / (width / height);
+    double height3D = width3D / (aspectRatio);
     Math::Vector3D right_vector = _camera.getRight();
     Math::Vector3D up_vector = _camera.getUp();
     Math::Vector3D horizontal_step = _camera.getRight() * (width3D / width);
@@ -86,17 +87,21 @@ void Core::displayScene(void) {
     std::ofstream outFile("output.ppm");
     
     outFile << "P3\n" << width << " " << height << "\n255\n";
-    for (int x = 0; x < width; x++) {
-        for (int y = 0; y < height; ++y) {
-            current_point = screen_center - (horizontal_step * 0.5 * width3D) + (horizontal_step * x) + (vertical_step * 0.5 * height3D) - (vertical_step * y);
+    for (int y = 0; y < height; ++y) {
+        for (int x = 0; x < width; x++) {
+            double fx = static_cast<double>(x);
+            double fy = static_cast<double>(y);
+            current_point = screen_center - (right_vector * (0.5 * width3D)) + (horizontal_step * fx) + (up_vector * (0.5 * height3D)) - (vertical_step * fy);
             rayDirection = (current_point - camera_origin).normalized();
             current_ray = RayTracer::Ray(camera_origin, rayDirection);
             color = checkColisions(current_ray);
-            int ir = int(color.r);
-            int ig = int(color.g);
-            int ib = int(color.b);
-
+            int ir = static_cast<int>(color.r);
+            int ig = static_cast<int>(color.g);
+            int ib = static_cast<int>(color.b);
+    
             outFile << ir << " " << ig << " " << ib << "\n";
         }
     }
+
+    outFile.close();
 }

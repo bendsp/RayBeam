@@ -25,7 +25,13 @@ void parseCamera(const libconfig::Setting &root, Core *core)
     core->_camera.setFov(fov);
     
     // calculate screen properties
-    double distance = 0.5 * core->_camera.getWidth() / tan(0.5 * fov);
+    // double distance = 0.5 * core->_camera.getWidth() / tan(0.5 * fov);
+    float aspect_ratio = static_cast<float>(core->_camera.getWidth()) / static_cast<float>(core->_camera.getHeight());
+    float vertical_distance = 0.5f * core->_camera.getHeight() / tan(0.5f * fov);
+    float horizontal_fov = 2.0f * atan(tan(0.5f * fov) * aspect_ratio);
+    float horizontal_distance = 0.5f * core->_camera.getWidth() / tan(0.5f * horizontal_fov);
+    float distance = 0.5f * (horizontal_distance + vertical_distance);
+    
     core->_camera.setDistanceToScreen(distance);
     Math::Vector3D rightVector = math.crossProduct(core->_camera.getDirection(), Math::Vector3D(0, 1, 0));
     Math::Vector3D upVector = math.crossProduct(rightVector, core->_camera.getDirection());
