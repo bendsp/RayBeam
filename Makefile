@@ -10,6 +10,7 @@ SRC =	src/main.cpp \
 		src/parser/file_parser.cpp \
 		src/parser/parse_primitives.cpp \
 		src/parser/parse_lights.cpp \
+		src/parser/parse_transformations.cpp \
 
 OBJ = $(SRC:.cpp=.o)
 

@@ -62,3 +62,4 @@ class Core {
 
 void parsePrimitives(const libconfig::Setting &root, Core *core);
 void parseLights(const libconfig::Setting &root, Core *core);
+void parseTransformations(const libconfig::Setting &root, Core *core);
