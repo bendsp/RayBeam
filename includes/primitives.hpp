@@ -274,6 +274,7 @@ namespace RayTracer {
 
             //* Methods
             bool hits(const Ray &ray) const{
+                //printf("Ray origin : %f %f %f\n", ray.getOrigin().x, ray.getOrigin().y, ray.getOrigin().z);
                 Math::Vector3D oc = ray.getOrigin() - _center;
                 double a = ray.getDirection().dot(ray.getDirection());
                 double b = 2.0 * oc.dot(ray.getDirection());

@@ -145,7 +145,7 @@ namespace RayTracer {
                 l.setAmbient(0);
                 l.setDiffuse(0);
                 l.setPosition({0, 0, 0});
-                l._direction = {0, 0, 0};
+                l._direction = Math::Vector3D(0, 0, 0);;
             };
 
             //* Destructor
@@ -171,7 +171,7 @@ namespace RayTracer {
                     l.setPosition({0, 0, 0});
                     l.setAmbient(0);
                     l.setDiffuse(0);
-                    l._direction = {0, 0, 0};
+                    l._direction = Math::Vector3D(0, 0, 0);
                 }
                 return *this;
             }
