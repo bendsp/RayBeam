@@ -7,9 +7,12 @@
 
 #pragma once
 
+#include <libconfig.h++>
+#include <iostream>
+#include <unordered_map>
+#include <vector>
 #include "primitives.hpp"
 #include "lights.hpp"
-#include <vector>
 
 class Core {
     public:
@@ -56,3 +59,6 @@ class Core {
                 std::string _message;
         };
 };
+
+void parsePrimitives(const libconfig::Setting &root, Core *core);
+void parseLights(const libconfig::Setting &root, Core *core);
