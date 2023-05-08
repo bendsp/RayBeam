@@ -13,7 +13,21 @@ class Math {
     public:
         class Vector3D;
         class Point3D;
-        class Rectangle3D;
+
+    // * Methods
+    Vector3D crossProduct(const Vector3D &v1, const Vector3D &v2)
+    {
+        return Vector3D(v1.y * v2.z - v1.z * v2.y,
+                        v1.z * v2.x - v1.x * v2.z,
+                        v1.x * v2.y - v1.y * v2.x);
+    }
+
+    double degToRadians(double degrees)
+    {
+        return degrees * (3.14159265358979323846 / 180.0);
+    }
+
+    // * Classes
     class Vector3D {
         public:
             //* Attributes
@@ -283,10 +297,4 @@ class Math {
             }
     };
 
-    Vector3D crossProduct(const Vector3D &v1, const Vector3D &v2)
-    {
-        return Vector3D(v1.y * v2.z - v1.z * v2.y,
-                        v1.z * v2.x - v1.x * v2.z,
-                        v1.x * v2.y - v1.y * v2.x);
-    }
 };

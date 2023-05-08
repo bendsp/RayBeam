@@ -7,11 +7,6 @@
 
 #include "core.hpp"
 
-double toRadians(double degrees)
-{
-    return degrees * (3.14159265358979323846 / 180.0);
-}
-
 void parseCamera(const libconfig::Setting &root, Core *core)
 {
     Math math;

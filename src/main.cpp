@@ -15,7 +15,7 @@ void Core::printCoreInfo(void)
 {
     std::cout << "Origin : {" << _camera._origin.x << ", " << _camera._origin.y << ", " << _camera._origin.z << "}" << std::endl;
     std::cout << "Distance to Screen: " << _camera.getDistanceToScreen() << std::endl;
-    std::cout << "Direction: " << _camera._direction.x << ", " << _camera._direction.y << ", " << _camera._direction.z << std::endl; 
+    std::cout << "Direction: " << _camera._forward.x << ", " << _camera._forward.y << ", " << _camera._forward.z << std::endl; 
     std::cout << "Field of view : " << _camera._fov << std::endl;
     std::cout << "Width : " << _camera._width << std::endl;
     std::cout << "Height : " << _camera._height << std::endl;
