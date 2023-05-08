@@ -6,8 +6,11 @@
 ##
 
 SRC =	src/main.cpp \
-		src/file_parser.cpp \
 		src/scene.cpp \
+		src/parser/file_parser.cpp \
+		src/parser/parse_primitives.cpp \
+		src/parser/parse_lights.cpp \
+		src/parser/parse_transformations.cpp \
 
 OBJ = $(SRC:.cpp=.o)
 
