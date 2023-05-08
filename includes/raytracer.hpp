@@ -134,9 +134,8 @@ namespace RayTracer {
 
             //* Methods
             RayTracer::Ray ray(double u, double v) const {
-                Math::Point3D pOnScreen = _screen.pointAt(u, v);
-                Math::Vector3D direction = (_origin - pOnScreen) + _direction;
-                return RayTracer::Ray(_origin, direction);
+                RayTracer::Ray ray;
+                return ray;
             }
 
             //* Getters
