@@ -243,9 +243,9 @@ class Math {
                 return Point3D(x + vec.x, y + vec.y, z + vec.z);
             }
 
-            Point3D operator-(const Point3D &p1) {
-                return Point3D(x - p1.x, y - p1.y, z - p1.z);
-            }
+            // Point3D operator-(const Point3D &p1) {
+            //     return Point3D(x - p1.x, y - p1.y, z - p1.z);
+            // }
 
             Point3D operator+(const Point3D &p1) {
                 return Point3D(x + p1.x, y + p1.y, z + p1.z);
@@ -270,6 +270,10 @@ class Math {
                 y -= v.y;
                 z -= v.z;
                 return *this;
+            }
+
+            Point3D operator-(const Vector3D& vec) const {
+                return Point3D(x - vec.x, y - vec.y, z - vec.z);
             }
 
             friend Vector3D operator-(const Point3D p1, const Point3D p2) {

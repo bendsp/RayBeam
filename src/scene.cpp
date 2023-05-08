@@ -58,17 +58,45 @@
 RayTracer::RGB Core::checkColisions(RayTracer::Ray ray)
 {
     RayTracer::RGB color{0, 0, 0};
+    for (int i = 0; i < _primitives.size(); i++) {
+        if (_primitives[i]->hits(ray)) {
+            color = _primitives[i]->getColor();
+        }
+    }
     return color;
 }
 
 void Core::displayScene(void) {
-    float planeWidth = this->_camera._width * tan(this->_camera._fov * 0.5f * M_PI / 180.0f) * 2;
-    float planeHeight = planeWidth * this->_camera._height / this->_camera._width;
-    Math::Point3D bottomLeftLocal = Math::Point3D(-planeWidth / 2, -planeHeight / 2, 0);
-    std::ofstream outFile("output.ppm");
-    outFile << "P3\n" << this->_camera._width << " " << this->_camera._height << "\n255\n";
+    
+    int width = _camera._width;
+    int height = _camera._height;
+    double width3D = 2 * _camera.getDistanceToScreen() * tan(0.5 * _camera.getFov());
+    double height3D = width3D / (width / height);
+    Math::Vector3D right_vector = _camera.getRight();
+    Math::Vector3D up_vector = _camera.getUp();
+    Math::Vector3D horizontal_step = _camera.getRight() * (width3D / width);
+    Math::Vector3D vertical_step = _camera.getUp() * (height3D / height);
+    Math::Vector3D rayDirection;
+    Math::Point3D camera_origin = _camera.getOrigin();
+    Math::Point3D screen_center = _camera.getScreenCenter();
+    Math::Point3D current_point;
+    RayTracer::Ray current_ray;
+    RayTracer::RGB color;
 
-    // TODO: render loop
-    outFile.close();
-    return;
+    std::ofstream outFile("output.ppm");
+    
+    outFile << "P3\n" << width << " " << height << "\n255\n";
+    for (int x = 0; x < width; x++) {
+        for (int y = 0; y < height; ++y) {
+            current_point = screen_center - (horizontal_step * 0.5 * width3D) + (horizontal_step * x) + (vertical_step * 0.5 * height3D) - (vertical_step * y);
+            rayDirection = (current_point - camera_origin).normalized();
+            current_ray = RayTracer::Ray(camera_origin, rayDirection);
+            color = checkColisions(current_ray);
+            int ir = int(color.r);
+            int ig = int(color.g);
+            int ib = int(color.b);
+
+            outFile << ir << " " << ig << " " << ib << "\n";
+        }
+    }
 }
