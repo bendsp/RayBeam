@@ -62,7 +62,7 @@ class Core {
         };
 };
 
-void parseCamera(const libconfig::Setting &root,Core *core);
-void parsePrimitives(const libconfig::Setting &root,Core *core);
-void parseLights(const libconfig::Setting &root,Core *core);
-void parseTransformations(const libconfig::Setting &root,Core *core);
+void parseCamera(const libconfig::Setting &root, Core *core);
+void parsePrimitives(const libconfig::Setting &root, Core *core);
+void parseLights(const libconfig::Setting &root, Core *core);
+void parseTransformations(const libconfig::Setting &root, Core *core);

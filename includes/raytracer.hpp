@@ -141,8 +141,20 @@ namespace RayTracer {
                 return _origin;
             }
 
+            const Math::Point3D &getScreenCenter() const {
+                return _screenCenter;
+            }
+
             const Math::Vector3D &getDirection() const {
                 return _forward;
+            }
+
+            const Math::Vector3D &getUp() const {
+                return _up;
+            }
+
+            const Math::Vector3D &getRight() const {
+                return _right;
             }
 
             const double &getDistanceToScreen() const {
@@ -166,8 +178,20 @@ namespace RayTracer {
                 _origin = origin;
             }
 
+            void setScreenCenter(const Math::Point3D &screenCenter) {
+                _screenCenter = screenCenter;
+            }
+
             void setDirection(const Math::Vector3D &direction) {
                 _forward = direction.normalized();
+            }
+
+            void setUp(const Math::Vector3D &up) {
+                _up = up.normalized();
+            }
+
+            void setRight(const Math::Vector3D &right) {
+                _right = right.normalized();
             }
 
             void setDistanceToScreen(const double &distanceToScreen) {

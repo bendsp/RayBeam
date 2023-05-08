@@ -133,7 +133,10 @@ namespace RayTracer {
             Math::Vector3D _direction;
 
             //* Constructors
-            DirectionalLight() : ALight(0, 0, {0, 0, 0}), _direction({0, 0, 0}) {};
+            DirectionalLight() : ALight(0, 0, {0, 0, 0})
+            {
+                _direction = Math::Vector3D(0, 0, 0);
+            };
 
             DirectionalLight(Math::Point3D position, Math::Vector3D direction, double ambient, double diffuse)
                 : ALight(ambient, diffuse, position), _direction(direction) {};

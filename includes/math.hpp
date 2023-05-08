@@ -24,7 +24,7 @@ class Math {
 
     double degToRadians(double degrees)
     {
-        return degrees * (3.14159265358979323846 / 180.0);
+        return degrees * (M_PI / 180.0);
     }
 
     // * Classes
@@ -45,6 +45,8 @@ class Math {
                 v.y = 0;
                 v.z = 0;
             }
+
+            Vector3D(const Point3D& point) : x(point.x), y(point.y), z(point.z) {}
 
             //* Destructor
             ~Vector3D() = default;
@@ -164,6 +166,10 @@ class Math {
                 return Vector3D(x / magnitude, y / magnitude, z / magnitude);
             }
 
+            Point3D toPoint() const {
+                return Point3D(x, y, z);
+            }
+
             //* Getters
             double getX() const {
                 return x;
@@ -233,8 +239,8 @@ class Math {
                 return *this;
             }
 
-            Point3D operator+(const Vector3D &v) const {
-                return Point3D(x + v.x, y + v.y, z + v.z);
+            Point3D operator+(const Vector3D& vec) const {
+                return Point3D(x + vec.x, y + vec.y, z + vec.z);
             }
 
             Point3D operator-(const Point3D &p1) {

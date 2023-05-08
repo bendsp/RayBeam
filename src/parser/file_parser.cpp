@@ -29,6 +29,14 @@ void parseCamera(const libconfig::Setting &root, Core *core)
     core->_camera.setDistanceToScreen(distance);
     Math::Vector3D rightVector = math.crossProduct(core->_camera.getDirection(), Math::Vector3D(0, 1, 0));
     Math::Vector3D upVector = math.crossProduct(rightVector, core->_camera.getDirection());
+    core->_camera.setRight(rightVector);
+    core->_camera.setUp(upVector);
+
+    // calculate screen center
+    Math::Vector3D cameraOriginVec(core->_camera.getOrigin());
+    Math::Vector3D screenCenterVec = cameraOriginVec + (core->_camera.getDirection() * core->_camera.getDistanceToScreen());
+    Math::Point3D screenCenter = screenCenterVec.toPoint(); // Assuming you have the 'toPoint()' function in your Vector3D class
+
     
 }
 
