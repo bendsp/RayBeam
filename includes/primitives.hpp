@@ -33,6 +33,8 @@ namespace RayTracer {
             virtual Math::HitPoint hits(const Ray &ray) const = 0;
             virtual double getIntersectionDistance(const Ray &ray) const = 0;
             virtual Math::Point3D getIntersectionPoint(const Ray &ray) const = 0;
+            virtual void translate(const Math::Vector3D &translation) = 0;
+            // virtual void rotate(const Axis &axis, const double &angle) = 0;
     };
 
     class APrimitive : public IPrimitive {
@@ -145,16 +147,16 @@ namespace RayTracer {
                 // Calcul de la hauteur et de la pente du cône
                 // const double height = sqrt(pow(_head.x - _base.x, 2) + pow(_head.y - _base.y, 2) + pow(_head.z - _base.z, 2));
                 // const double slope = (_base.y - _head.y) / height;
-                
+
                 // // Paramétrage du rayon
                 // const Math::Point3D O = ray._origin - _base;
                 // const Math::Vector3D D = ray._direction.normalized();
-                
+
                 // // Calcul des coefficients de l'équation quadratique
                 // const double a = pow(D.x, 2) + pow(D.z, 2) - pow(D.y, 2) * pow(slope, 2);
                 // const double b = 2 * (O.x * D.x + O.z * D.z - O.y * pow(slope, 2) * pow(height - O.y, 2));
                 // const double c = pow(O.x, 2) + pow(O.z, 2) - pow(O.y, 2) * pow(slope, 2) * pow(height - O.y, 2);
-                
+
                 // // Résolution de l'équation quadratique
                 // const double discriminant = pow(b, 2) - 4 * a * c;
                 // if (discriminant == 0) {
@@ -182,12 +184,20 @@ namespace RayTracer {
                 //         return t2;
                 //     }
                 // }
-                // return 0;
+                return 0;
             }
 
             Math::Point3D getIntersectionPoint(const Ray &ray) const{
                 return Math::Point3D();
             }
+
+            void translate(const Math::Vector3D &translation) {
+                _base += translation;
+                _head += translation;
+            }
+
+            // void rotate(const Axis &axis, const double &angle) {
+            // }
 
             void displayPrimitive() const{
                 std::cout << "[CONE]" << std::endl;
@@ -313,6 +323,13 @@ namespace RayTracer {
                 Math::Point3D point = ray.getOrigin() + ray.getDirection() * t;
                 return point;
             }
+
+            void translate(const Math::Vector3D &translation) {
+                _center += translation;
+            }
+
+            // void rotate(const Axis &axis, double angle) {
+            // }
 
             void displayPrimitive() const{
                 std::cout << "[SPHERE]" << std::endl;
@@ -502,6 +519,23 @@ namespace RayTracer {
                 //     return (ray.getOrigin().z == _position);
                 return Math::Point3D();
             }
+
+            void translate(const Math::Vector3D &translation) {
+                switch (_axis) {
+                    case Axis::X:
+                        _position += translation.x;
+                        break;
+                    case Axis::Y:
+                        _position += translation.y;
+                        break;
+                    case Axis::Z:
+                        _position += translation.z;
+                        break;
+                }
+            }
+
+            // void rotate(const Axis &axis, const double &angle) {
+            // }
 
             void displayPrimitive() const{
                 std::cout << "[PLANE]" << std::endl;
