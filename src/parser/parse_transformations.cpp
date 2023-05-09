@@ -7,7 +7,7 @@
 
 #include "core.hpp"
 
-void parseTranslation(const libconfig::Setting &transformations, Core *core)
+void parseTranslations(const libconfig::Setting &transformations, Core *core)
 {
     try {
         const libconfig::Setting &translations = transformations["translations"];
@@ -19,23 +19,48 @@ void parseTranslation(const libconfig::Setting &transformations, Core *core)
             int y = static_cast<int>(translation["y"]);
             int z = static_cast<int>(translation["z"]);
             std::cout << "Translation: " << index << " > " << x << " " << y << " " << z << std::endl;
-            //Math::Vector3D vec = Math::Vector3D(x, y, z);
-            //core->addTransformation(new RayTracer::Translation(vec));
+
+            if (core->_primitives.size() < index)
+                throw Core::CoreException("Invalid index for translation");
+
+            Math::Vector3D translationVector(x, y, z);
+            core->_primitives[index - 1]->translate(translationVector);
         }
+
     } catch (const libconfig::SettingNotFoundException &nfex) {
     }
 }
 
-void parseRotation(const libconfig::Setting &transformations, Core *core)
+void parseRotations(const libconfig::Setting &transformations, Core *core)
 {
+    try {
+        const libconfig::Setting &rotations = transformations["rotations"];
 
+        for (int i = 0; i < rotations.getLength(); i++) {
+            const libconfig::Setting &rotation = rotations[i];
+            int index = static_cast<int>(rotation["index"]);
+            int angle = static_cast<int>(rotation["angle"]);
+            int x = static_cast<int>(rotation["x"]);
+            int y = static_cast<int>(rotation["y"]);
+            int z = static_cast<int>(rotation["z"]);
+            std::cout << "Rotation: " << index << " > " << angle << " " << x << " " << y << " " << z << std::endl;
+
+            if (core->_primitives.size() < index)
+                throw Core::CoreException("Invalid index for rotation");
+
+            // TODO: implement rotate
+            // core->_primitives[index - 1]->rotate();
+        }
+
+    } catch (const libconfig::SettingNotFoundException &nfex) {
+    }
 }
 
-// TODO: parse and apply transformations
 void parseTransformations(const libconfig::Setting &root, Core *core)
 {
     const libconfig::Setting &transformations = root["transformations"];
-    // const libconfig::Setting &rotations = transformations["rotations"];
+    const libconfig::Setting &rotations = transformations["rotations"];
 
-    parseTranslation(transformations, core);
+    parseTranslations(transformations, core);
+    parseRotations(transformations, core);
 }

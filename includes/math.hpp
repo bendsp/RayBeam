@@ -258,11 +258,17 @@ class Math {
                 return *this;
             }
 
-            Point3D &operator+=(const Vector3D &v) {
+            Point3D& operator+=(const Vector3D& v) {
                 x += v.x;
                 y += v.y;
                 z += v.z;
                 return *this;
+            }
+
+            const Point3D operator+=(const Vector3D& v) const {
+                Point3D result(*this);
+                result += v;
+                return result;
             }
 
             Point3D &operator-=(const Vector3D &v) {
