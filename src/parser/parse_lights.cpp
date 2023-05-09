@@ -21,6 +21,7 @@ void parsePointLights(const libconfig::Setting &lights, Core *core)
             int y = static_cast<int>(pointLight["y"]);
             int z = static_cast<int>(pointLight["z"]);
             Math::Point3D position = Math::Point3D(x, y, z);
+            core->setAmbient(ambient);
             core->addLight(new RayTracer::PointLight(position, ambient, diffuse));
         }
     } catch (const libconfig::SettingNotFoundException &nfex) {

@@ -20,7 +20,7 @@ void Core::printCoreInfo(void)
     std::cout << "Width : " << _camera._width << std::endl;
     std::cout << "Height : " << _camera._height << std::endl;
     std::cout << "Center of screen: " << _camera._screenCenter.x << ", " << _camera._screenCenter.y << ", " << _camera._screenCenter.z << std::endl;
-
+    std::cout << "Ambient light: " << _ambient << std::endl;
     int nb_prim = _primitives.size();
     std::cout << "\n -- Number of primitives : " << _primitives.size() << std::endl;
     for (int i = 0; i < nb_prim; i++) {
