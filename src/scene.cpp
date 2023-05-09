@@ -94,8 +94,8 @@ void Core::displayScene(void) {
     std::ofstream outFile("output.ppm");
     
     outFile << "P3\n" << width << " " << height << "\n255\n";
-    for (int y = 0; y < height; ++y) {
-        for (int x = 0; x < width; x++) {
+    for (int y = height - 1; y >= 0;--y) {
+        for (int x = width - 1; x >= 0; --x) {
             double fx = static_cast<double>(x);
             double fy = static_cast<double>(y);
             current_point = screen_center - (right_vector * (0.5 * width3D)) + (horizontal_step * fx) + (up_vector * (0.5 * height3D)) - (vertical_step * fy);
