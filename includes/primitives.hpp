@@ -406,37 +406,80 @@ namespace RayTracer {
                           axisVector.x * orthoVector.y - axisVector.y * orthoVector.x).normalized();
             }
 
-            bool hits(const Ray &ray) const
-            {
-                // return false; // !! REMOVE THIS
-                const double EPSILON = 0.001;
-                double denom = getNormal().dot(ray.getDirection());
+            bool hits(const Ray& ray) const {
+                float denominator = 0;
+                float numerator = _position; // because the plane equation is Ax + By + Cz + D = 0, D = -position here
 
-                if (std::abs(denom) < EPSILON) {
-                    // ray is almost parallel to plane, no intersection
+                // Depending on the axis, we calculate the denominator differently
+                switch (_axis) {
+                    case Axis::X: // Plane is orthogonal to X axis, hence normal is (1, 0, 0)
+                        denominator = ray._direction.x;
+                        numerator += ray._origin.x;
+                        break;
+                    case Axis::Y: // Plane is orthogonal to Y axis, hence normal is (0, 1, 0)
+                        denominator = ray._direction.y;
+                        numerator += ray._origin.y;
+                        break;
+                    case Axis::Z: // Plane is orthogonal to Z axis, hence normal is (0, 0, 1)
+                        denominator = ray._direction.z;
+                        numerator += ray._origin.z;
+                        break;
+                }
+
+                // If denominator is 0, the ray is parallel to the plane and they don't intersect
+                if (denominator == 0) {
                     return false;
                 }
 
-                // compute intersection distance t
-                Math::Vector3D dot = Math::Vector3D(getNormal().getX(), 0, 0);
-                double t = (_position - getNormal().dot(ray.getDirection())) / denom;
+                // Calculate t
+                float t = numerator / denominator;
+
+                // If t is negative, the intersection point is behind the origin of the ray
                 if (t < 0) {
-                    // intersection is behind ray origin
                     return false;
                 }
 
+                // If we've gotten this far, the ray intersects the plane
                 return true;
-            }
+            }           
+
             double getIntersectionDistance(const Ray &ray) const
             {
-                // if (_axis == X)
-                //     return (ray.getOrigin().x == _position);
-                // else if (_axis == Y)
-                //     return (ray.getOrigin().y == _position);
-                // else
-                //     return (ray.getOrigin().z == _position);
-                return 0;
+                float denominator = 0;
+                float numerator = _position; // because the plane equation is Ax + By + Cz + D = 0, D = -position here
+
+                // Depending on the axis, we calculate the denominator differently
+                switch (_axis) {
+                    case Axis::X: // Plane is orthogonal to X axis, hence normal is (1, 0, 0)
+                        denominator = ray._direction.x;
+                        numerator += ray._origin.x;
+                        break;
+                    case Axis::Y: // Plane is orthogonal to Y axis, hence normal is (0, 1, 0)
+                        denominator = ray._direction.y;
+                        numerator += ray._origin.y;
+                        break;
+                    case Axis::Z: // Plane is orthogonal to Z axis, hence normal is (0, 0, 1)
+                        denominator = ray._direction.z;
+                        numerator += ray._origin.z;
+                        break;
+                }
+
+                // If denominator is 0, the ray is parallel to the plane
+                if (denominator == 0) {
+                    return std::numeric_limits<double>::infinity();
+                }
+
+                // Calculate t
+                double t = numerator / denominator;
+
+                // If t is negative, the intersection point is behind the origin of the ray
+                if (t < 0) {
+                    return std::numeric_limits<double>::infinity();
+                }
+                // Return the intersection distance
+                return t;
             }
+
             Math::Point3D getIntersectionPoint(const Ray &ray) const
             {
                 // if (_axis == X)
