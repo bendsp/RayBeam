@@ -30,7 +30,7 @@ namespace RayTracer {
 
             virtual RayTracer::RGB getColor() const = 0;
             virtual void displayPrimitive() const = 0;
-            virtual bool hits(const Ray &ray) const = 0;
+            virtual Math::HitPoint hits(const Ray &ray) const = 0;
             virtual double getIntersectionDistance(const Ray &ray) const = 0;
             virtual Math::Point3D getIntersectionPoint(const Ray &ray) const = 0;
             virtual void translate(const Math::Vector3D &translation) = 0;
@@ -110,38 +110,38 @@ namespace RayTracer {
 
             //* Methods
 
-            bool hits(const Ray &ray) const{
-                const double height = (_head - _base).length();
-                const double slope = _radius / height;
-                const Math::Point3D O = ray.getOrigin();
-                const Math::Vector3D D = ray.getDirection();
-                const double a = (D.x * D.x) + (D.z * D.z) - (slope * slope * D.y * D.y);
-                const double b = 2 * (O.x * D.x + O.y * D.y - slope * slope * O.z * D.z);
-                const double c = (O.x * O.x) + (O.y * O.y) - (slope * slope * O.z * O.z);
+            // Math::HitPoint hits(const Ray &ray) const{
+            //     const double height = (_head - _base).length();
+            //     const double slope = _radius / height;
+            //     const Math::Point3D O = ray.getOrigin();
+            //     const Math::Vector3D D = ray.getDirection();
+            //     const double a = (D.x * D.x) + (D.z * D.z) - (slope * slope * D.y * D.y);
+            //     const double b = 2 * (O.x * D.x + O.y * D.y - slope * slope * O.z * D.z);
+            //     const double c = (O.x * O.x) + (O.y * O.y) - (slope * slope * O.z * O.z);
 
-                const double discriminant = b * b - 4 * a * c;
-                if (discriminant < 0) {
-                    return false;
-                }
+            //     const double discriminant = b * b - 4 * a * c;
+            //     if (discriminant < 0) {
+            //         return false;
+            //     }
 
-                const double t1 = (-b - std::sqrt(discriminant)) / (2 * a);
-                const double t2 = (-b + std::sqrt(discriminant)) / (2 * a);
+            //     const double t1 = (-b - std::sqrt(discriminant)) / (2 * a);
+            //     const double t2 = (-b + std::sqrt(discriminant)) / (2 * a);
 
-                const Math::Point3D intersection1 = O + (D * t1);
-                const Math::Point3D intersection2 = O + (D * t2);
+            //     const Math::Point3D intersection1 = O + (D * t1);
+            //     const Math::Point3D intersection2 = O + (D * t2);
 
-                const double dist1 =(intersection1 - _base).length();
-                const double dist2 =(intersection2 - _base).length();
+            //     const double dist1 =(intersection1 - _base).length();
+            //     const double dist2 =(intersection2 - _base).length();
 
-                if (dist1 < height && dist2 < height) {
-                    return true;
-                } else if (dist1 < height && dist2 > height) {
-                    return true;
-                } else if (dist1 > height && dist2 < height) {
-                    return true;
-                }
-                return false;
-            }
+            //     if (dist1 < height && dist2 < height) {
+            //         return true;
+            //     } else if (dist1 < height && dist2 > height) {
+            //         return true;
+            //     } else if (dist1 > height && dist2 < height) {
+            //         return true;
+            //     }
+            //     return false;
+            // }
 
             double getIntersectionDistance(const Ray &ray) const{
                 // Calcul de la hauteur et de la pente du cône
@@ -283,27 +283,33 @@ namespace RayTracer {
             }
 
             //* Methods
-            bool hits(const Ray &ray) const {
+            Math::HitPoint hits(const Ray &ray) const {
                 //printf("Ray origin : %f %f %f\n", ray.getOrigin().x, ray.getOrigin().y, ray.getOrigin().z);
                 Math::Vector3D oc = ray.getOrigin() - _center;
                 double a = ray.getDirection().dot(ray.getDirection());
                 double b = 2.0 * oc.dot(ray.getDirection());
                 double c = oc.dot(oc) - _radius * _radius;
                 double discriminant = b * b - 4 * a * c;
-
+                Math::HitPoint hitPoint = Math::HitPoint();
 				// No solution when d < 0 (ray misses sphere)
 				if (discriminant >= 0) {
                     // Distance to nearest intersection point (from quadratic formula)
 					float dst = (-b - sqrt(discriminant)) / (2 * a);
-					if (dst <=0)
-                        return true;
+                    if (dst < 0) {
+                        // Ignore intersections that occur behind the ray
+                        hitPoint.hit = true;
+                        hitPoint.distance = dst;
+                        hitPoint.hitPointVar = new Math::Point3D(ray.getOrigin() + ray.getDirection() * dst);
+                    } else {
+                        hitPoint.hit = false;
+                    }
 				}
-				return false;
+				return hitPoint;
 			}
 
             double getIntersectionDistance(const Ray &ray) const{
                 double a = ray.getDirection().dot(ray.getDirection());
-                double b = 2 * ray.getDirection().dot(ray.getOrigin() - _center);
+                double b = 2 * ray.getDirection().dot(_center - ray.getOrigin());
                 double c = (_center - ray.getOrigin()).dot(_center - ray.getOrigin()) - _radius * _radius;
                 double discriminant = b * b - 4 * a * c;
 
@@ -423,9 +429,10 @@ namespace RayTracer {
                           axisVector.x * orthoVector.y - axisVector.y * orthoVector.x).normalized();
             }
 
-            bool hits(const Ray& ray) const {
+            Math::HitPoint hits(const Ray& ray) const {
                 float denominator = 0;
                 float numerator = _position; // because the plane equation is Ax + By + Cz + D = 0, D = -position here
+                Math::HitPoint hitPoint = Math::HitPoint();
 
                 // Depending on the axis, we calculate the denominator differently
                 switch (_axis) {
@@ -445,7 +452,8 @@ namespace RayTracer {
 
                 // If denominator is 0, the ray is parallel to the plane and they don't intersect
                 if (denominator == 0) {
-                    return false;
+                    hitPoint.hit = false;
+                    return hitPoint;
                 }
 
                 // Calculate t
@@ -453,11 +461,15 @@ namespace RayTracer {
 
                 // If t is negative, the intersection point is behind the origin of the ray
                 if (t < 0) {
-                    return false;
+                    hitPoint.hit = false;
+                    return hitPoint;
                 }
 
                 // If we've gotten this far, the ray intersects the plane
-                return true;
+                hitPoint.hit = true;
+                hitPoint.distance = t;
+                hitPoint.hitPointVar = new Math::Point3D(ray._origin + ray._direction * t);
+                return hitPoint;
             }
 
             double getIntersectionDistance(const Ray &ray) const

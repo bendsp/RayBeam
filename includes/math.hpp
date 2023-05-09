@@ -13,6 +13,7 @@ class Math {
     public:
         class Vector3D;
         class Point3D;
+        class HitPoint;
 
     // * Methods
     Vector3D crossProduct(const Vector3D &v1, const Vector3D &v2)
@@ -26,6 +27,16 @@ class Math {
     {
         return degrees * (M_PI / 180.0);
     }
+
+    class HitPoint {
+        public:
+            bool hit;
+            float distance;
+            Math::Point3D *hitPointVar;
+            HitPoint() : hit(false), distance(0), hitPointVar(new Math::Point3D()) {}
+            HitPoint(bool hit, float dst, Math::Point3D *hitPointVar) : hit(hit), distance(dst), hitPointVar(hitPointVar) {}
+            ~HitPoint() = default;
+    };
 
     // * Classes
     class Vector3D {

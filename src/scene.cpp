@@ -55,20 +55,33 @@
 //     std::cout << "Rendering complete. Output saved to 'output.ppm'." << std::endl;
 // }
 
-RayTracer::RGB Core::checkColisions(RayTracer::Ray ray)
+RayTracer::RGB Core::castLightingRay(RayTracer::Ray ray, RayTracer::RGB materialColor)
+{
+    int ar = static_cast<int>(materialColor.r * _ambient);
+    int ag = static_cast<int>(materialColor.g * _ambient);
+    int ab = static_cast<int>(materialColor.b * _ambient);
+    RayTracer::RGB color = {ar, ag, ab};
+    return color;
+}
+
+RayTracer::RGB Core::castCameraRay(RayTracer::Ray ray)
 {
     float distance;
-    float mindistance = std::numeric_limits<float>::max();
+    float bestDistance = std::numeric_limits<float>::max();
     RayTracer::RGB color{0, 0, 0};
+    Math::HitPoint hitPoint = Math::HitPoint();
+    Math::HitPoint bestHitPoint = Math::HitPoint();
     for (int i = 0; i < _primitives.size(); i++) {
-        if (_primitives[i]->hits(ray)) {
+        if (hitPoint = _primitives[i]->hits(ray); hitPoint.hit) {
             distance = _primitives[i]->getIntersectionDistance(ray);
-            if (distance < mindistance) {
-                mindistance = distance;
+            if (distance < bestDistance) {
+                bestDistance = distance;
+                bestHitPoint = hitPoint;
                 color = _primitives[i]->getColor();
             }
         }
     }
+    color = castLightingRay(ray, color);
     return color;
 }
 
@@ -93,14 +106,14 @@ void Core::displayScene(void) {
     std::ofstream outFile("output.ppm");
     
     outFile << "P3\n" << width << " " << height << "\n255\n";
-    for (int y = 0; y < height; ++y) {
-        for (int x = 0; x < width; x++) {
+    for (int y = height - 1; y >= 0;--y) {
+        for (int x = width - 1; x >= 0; --x) {
             double fx = static_cast<double>(x);
             double fy = static_cast<double>(y);
             current_point = screen_center - (right_vector * (0.5 * width3D)) + (horizontal_step * fx) + (up_vector * (0.5 * height3D)) - (vertical_step * fy);
             rayDirection = (current_point - camera_origin).normalized();
             current_ray = RayTracer::Ray(camera_origin, rayDirection);
-            color = checkColisions(current_ray);
+            color = castCameraRay(current_ray);
             int ir = static_cast<int>(color.r);
             int ig = static_cast<int>(color.g);
             int ib = static_cast<int>(color.b);
