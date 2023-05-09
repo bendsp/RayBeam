@@ -25,7 +25,6 @@ void parseCamera(const libconfig::Setting &root, Core *core)
     core->_camera.setFov(fov);
     
     // calculate screen properties
-    // double distance = 0.5 * core->_camera.getWidth() / tan(0.5 * fov);
     float aspect_ratio = static_cast<float>(core->_camera.getWidth()) / static_cast<float>(core->_camera.getHeight());
     float vertical_distance = 0.5f * core->_camera.getHeight() / tan(0.5f * fov);
     float horizontal_fov = 2.0f * atan(tan(0.5f * fov) * aspect_ratio);

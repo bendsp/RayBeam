@@ -54,7 +54,7 @@ namespace RayTracer {
         protected:
             RGB _color;
     };
-//zizi ^^
+
     class Cone: public APrimitive {
         public:
             //* Attributes
@@ -91,7 +91,7 @@ namespace RayTracer {
                 }
                 return *this;
             }
-// caca
+
             Cone &operator=(Cone &&c) noexcept{
                 if (this != &c) {
                     _base = c._base;
@@ -283,11 +283,9 @@ namespace RayTracer {
 
 				// No solution when d < 0 (ray misses sphere)
 				if (discriminant >= 0) {
-					// Distance to nearest intersection point (from quadratic formula)
+                    // Distance to nearest intersection point (from quadratic formula)
 					float dst = (-b - sqrt(discriminant)) / (2 * a);
-					// Ignore intersections that occur behind the ray
-					if (dst >= 0)
-						return (true);
+					return true;
 				}
 				return false;
 			}
