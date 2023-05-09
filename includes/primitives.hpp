@@ -289,7 +289,7 @@ namespace RayTracer {
                         // Ignore intersections that occur behind the ray
                         hitPoint.hit = true;
                         hitPoint.distance = dst;
-                        hitPoint.hitPointVar = new Math::Point3D(ray.getOrigin() + ray.getDirection() * dst);
+                        hitPoint.hitPointVar = Math::Point3D(ray.getOrigin() + ray.getDirection() * dst);
                     } else {
                         hitPoint.hit = false;
                     }
@@ -451,7 +451,7 @@ namespace RayTracer {
                 // If we've gotten this far, the ray intersects the plane
                 hitPoint.hit = true;
                 hitPoint.distance = t;
-                hitPoint.hitPointVar = new Math::Point3D(ray._origin + ray._direction * t);
+                hitPoint.hitPointVar = Math::Point3D(ray._origin + ray._direction * t);
                 return hitPoint;
             }
 

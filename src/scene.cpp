@@ -55,12 +55,17 @@
 //     std::cout << "Rendering complete. Output saved to 'output.ppm'." << std::endl;
 // }
 
-RayTracer::RGB Core::castLightingRay(RayTracer::Ray ray, RayTracer::RGB materialColor)
+RayTracer::RGB Core::castLightingRay(RayTracer::RGB materialColor, Math::HitPoint objectHitpoint)
 {
+    double intensity = _ambient;
     int ar = static_cast<int>(materialColor.r * _ambient);
     int ag = static_cast<int>(materialColor.g * _ambient);
     int ab = static_cast<int>(materialColor.b * _ambient);
     RayTracer::RGB color = {ar, ag, ab};
+
+    for (int i = 0; i < _lights.size(); ++i) {
+        intensity += _lights[i]->getIntensity(objectHitpoint.hitPointVar);
+    }
     return color;
 }
 
@@ -81,7 +86,7 @@ RayTracer::RGB Core::castCameraRay(RayTracer::Ray ray)
             }
         }
     }
-    color = castLightingRay(ray, color);
+    color = castLightingRay(color, bestHitPoint);
     return color;
 }
 

@@ -28,15 +28,6 @@ class Math {
         return degrees * (M_PI / 180.0);
     }
 
-    class HitPoint {
-        public:
-            bool hit;
-            float distance;
-            Math::Point3D *hitPointVar;
-            HitPoint() : hit(false), distance(0), hitPointVar(new Math::Point3D()) {}
-            HitPoint(bool hit, float dst, Math::Point3D *hitPointVar) : hit(hit), distance(dst), hitPointVar(hitPointVar) {}
-            ~HitPoint() = default;
-    };
 
     // * Classes
     class Vector3D {
@@ -316,6 +307,15 @@ class Math {
             void setZ(double z) {
                 this->z = z;
             }
+    };
+    class HitPoint {
+        public:
+            bool hit;
+            float distance;
+            Math::Point3D hitPointVar;
+            HitPoint() : hit(false), distance(0), hitPointVar(Math::Point3D()) {}
+            HitPoint(bool hit, float dst, Math::Point3D hitPointVar) : hit(hit), distance(dst), hitPointVar(hitPointVar) {}
+            ~HitPoint() = default;
     };
 
 };

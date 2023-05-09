@@ -13,6 +13,7 @@
 #include <vector>
 #include "primitives.hpp"
 #include "lights.hpp"
+#include "math.hpp"
 #include <vector>
 
 class Core {
@@ -48,7 +49,7 @@ class Core {
         // * Methods
         void displayScene(void);
         RayTracer::RGB castCameraRay(RayTracer::Ray ray);
-        RayTracer::RGB castLightingRay(RayTracer::Ray ray, RayTracer::RGB materialColor);
+        RayTracer::RGB castLightingRay(RayTracer::RGB materialColor, Math::HitPoint objectHitpoint);
         void printCoreInfo(void);
 
         // * Attributes
