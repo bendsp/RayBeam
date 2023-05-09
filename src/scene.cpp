@@ -57,16 +57,15 @@
 
 RayTracer::RGB Core::checkColisions(RayTracer::Ray ray)
 {
-    float maxdistance = std::numeric_limits<float>::max();
-    float distance = 0;
+    float distance;
+    float mindistance = std::numeric_limits<float>::max();
     RayTracer::RGB color{0, 0, 0};
     Math::HitPoint hitPoint = Math::HitPoint();
     for (int i = 0; i < _primitives.size(); i++) {
         if (hitPoint = _primitives[i]->hits(ray); hitPoint.hit) {
-            
             distance = _primitives[i]->getIntersectionDistance(ray);
-            if (distance < maxdistance) { // Removed the condition where maxdistance == 0
-                maxdistance = distance;
+            if (distance < mindistance) {
+                mindistance = distance;
                 color = _primitives[i]->getColor();
             }
         }

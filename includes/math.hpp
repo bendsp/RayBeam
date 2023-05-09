@@ -173,7 +173,7 @@ class Math {
             Vector3D normalized() const {
                 double magnitude = std::sqrt(x * x + y * y + z * z);
                 if (magnitude == 0)
-                    return Vector3D(0.5, 0, 0);
+                    return Vector3D(0, 0, -1);
                 return Vector3D(x / magnitude, y / magnitude, z / magnitude);
             }
 

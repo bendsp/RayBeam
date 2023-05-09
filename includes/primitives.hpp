@@ -54,7 +54,7 @@ namespace RayTracer {
         protected:
             RGB _color;
     };
-//zizi ^^
+
     class Cone: public APrimitive {
         public:
             //* Attributes
@@ -91,7 +91,7 @@ namespace RayTracer {
                 }
                 return *this;
             }
-// caca
+
             Cone &operator=(Cone &&c) noexcept{
                 if (this != &c) {
                     _base = c._base;
@@ -283,14 +283,15 @@ namespace RayTracer {
                 Math::HitPoint hitPoint = Math::HitPoint();
 				// No solution when d < 0 (ray misses sphere)
 				if (discriminant >= 0) {
-					// Distance to nearest intersection point (from quadratic formula)
+                    // Distance to nearest intersection point (from quadratic formula)
 					float dst = (-b - sqrt(discriminant)) / (2 * a);
-                    
-                    if (dst >= 0) {
+                    if (dst < 0) {
                         // Ignore intersections that occur behind the ray
                         hitPoint.hit = true;
                         hitPoint.distance = dst;
                         hitPoint.hitPointVar = new Math::Point3D(ray.getOrigin() + ray.getDirection() * dst);
+                    } else {
+                        hitPoint.hit = false;
                     }
 				}
 				return hitPoint;
@@ -298,13 +299,13 @@ namespace RayTracer {
 
             double getIntersectionDistance(const Ray &ray) const{
                 double a = ray.getDirection().dot(ray.getDirection());
-                double b = 2 * ray.getDirection().dot(ray.getOrigin() - _center);
+                double b = 2 * ray.getDirection().dot(_center - ray.getOrigin());
                 double c = (_center - ray.getOrigin()).dot(_center - ray.getOrigin()) - _radius * _radius;
                 double discriminant = b * b - 4 * a * c;
 
                 double t1 = (-b - std::sqrt(discriminant)) / (2 * a);
                 double t2 = (-b + std::sqrt(discriminant)) / (2 * a);
-                return (std::min(t1, t2));
+                return abs((std::min(t1, t2)));
             }
 
             Math::Point3D getIntersectionPoint(const Ray &ray) const{
@@ -411,37 +412,86 @@ namespace RayTracer {
                           axisVector.x * orthoVector.y - axisVector.y * orthoVector.x).normalized();
             }
 
-            Math::HitPoint hits(const Ray &ray) const
-            {
-                // return false; // !! REMOVE THIS
-                const double EPSILON = 0.001;
-                double denom = getNormal().dot(ray.getDirection());
+            Math::HitPoint hits(const Ray& ray) const {
+                float denominator = 0;
+                float numerator = _position; // because the plane equation is Ax + By + Cz + D = 0, D = -position here
                 Math::HitPoint hitPoint = Math::HitPoint();
-                if (std::abs(denom) < EPSILON) {
-                    // ray is almost parallel to plane, no intersection
+
+                // Depending on the axis, we calculate the denominator differently
+                switch (_axis) {
+                    case Axis::X: // Plane is orthogonal to X axis, hence normal is (1, 0, 0)
+                        denominator = ray._direction.x;
+                        numerator += ray._origin.x;
+                        break;
+                    case Axis::Y: // Plane is orthogonal to Y axis, hence normal is (0, 1, 0)
+                        denominator = ray._direction.y;
+                        numerator += ray._origin.y;
+                        break;
+                    case Axis::Z: // Plane is orthogonal to Z axis, hence normal is (0, 0, 1)
+                        denominator = ray._direction.z;
+                        numerator += ray._origin.z;
+                        break;
+                }
+
+                // If denominator is 0, the ray is parallel to the plane and they don't intersect
+                if (denominator == 0) {
+                    hitPoint.hit = false;
                     return hitPoint;
                 }
 
-                // compute intersection distance t
-                Math::Vector3D dot = Math::Vector3D(getNormal().getX(), 0, 0);
-                double t = (_position - getNormal().dot(ray.getDirection())) / denom;
+                // Calculate t
+                float t = numerator / denominator;
+
+                // If t is negative, the intersection point is behind the origin of the ray
                 if (t < 0) {
-                    // intersection is behind ray origin
+                    hitPoint.hit = false;
                     return hitPoint;
                 }
 
+                // If we've gotten this far, the ray intersects the plane
+                hitPoint.hit = true;
+                hitPoint.distance = t;
+                hitPoint.hitPointVar = new Math::Point3D(ray._origin + ray._direction * t);
                 return hitPoint;
             }
+
             double getIntersectionDistance(const Ray &ray) const
             {
-                // if (_axis == X)
-                //     return (ray.getOrigin().x == _position);
-                // else if (_axis == Y)
-                //     return (ray.getOrigin().y == _position);
-                // else
-                //     return (ray.getOrigin().z == _position);
-                return 0;
+                float denominator = 0;
+                float numerator = _position; // because the plane equation is Ax + By + Cz + D = 0, D = -position here
+
+                // Depending on the axis, we calculate the denominator differently
+                switch (_axis) {
+                    case Axis::X: // Plane is orthogonal to X axis, hence normal is (1, 0, 0)
+                        denominator = ray._direction.x;
+                        numerator += ray._origin.x;
+                        break;
+                    case Axis::Y: // Plane is orthogonal to Y axis, hence normal is (0, 1, 0)
+                        denominator = ray._direction.y;
+                        numerator += ray._origin.y;
+                        break;
+                    case Axis::Z: // Plane is orthogonal to Z axis, hence normal is (0, 0, 1)
+                        denominator = ray._direction.z;
+                        numerator += ray._origin.z;
+                        break;
+                }
+
+                // If denominator is 0, the ray is parallel to the plane
+                if (denominator == 0) {
+                    return std::numeric_limits<double>::infinity();
+                }
+
+                // Calculate t
+                double t = numerator / denominator;
+
+                // If t is negative, the intersection point is behind the origin of the ray
+                if (t < 0) {
+                    return std::numeric_limits<double>::infinity();
+                }
+                // Return the intersection distance
+                return t;
             }
+
             Math::Point3D getIntersectionPoint(const Ray &ray) const
             {
                 // if (_axis == X)
