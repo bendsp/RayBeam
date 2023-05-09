@@ -285,7 +285,8 @@ namespace RayTracer {
 				if (discriminant >= 0) {
                     // Distance to nearest intersection point (from quadratic formula)
 					float dst = (-b - sqrt(discriminant)) / (2 * a);
-					return true;
+					if (dst <=0)
+                        return true;
 				}
 				return false;
 			}
@@ -298,7 +299,7 @@ namespace RayTracer {
 
                 double t1 = (-b - std::sqrt(discriminant)) / (2 * a);
                 double t2 = (-b + std::sqrt(discriminant)) / (2 * a);
-                return (std::min(t1, t2));
+                return abs((std::min(t1, t2)));
             }
 
             Math::Point3D getIntersectionPoint(const Ray &ray) const{
