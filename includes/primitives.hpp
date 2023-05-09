@@ -273,15 +273,24 @@ namespace RayTracer {
             }
 
             //* Methods
-            bool hits(const Ray &ray) const{
+            bool hits(const Ray &ray) const {
                 //printf("Ray origin : %f %f %f\n", ray.getOrigin().x, ray.getOrigin().y, ray.getOrigin().z);
                 Math::Vector3D oc = ray.getOrigin() - _center;
                 double a = ray.getDirection().dot(ray.getDirection());
                 double b = 2.0 * oc.dot(ray.getDirection());
                 double c = oc.dot(oc) - _radius * _radius;
                 double discriminant = b * b - 4 * a * c;
-                return (discriminant >= 0);
-            }
+
+				// No solution when d < 0 (ray misses sphere)
+				if (discriminant >= 0) {
+					// Distance to nearest intersection point (from quadratic formula)
+					float dst = (-b - sqrt(discriminant)) / (2 * a);
+					// Ignore intersections that occur behind the ray
+					if (dst >= 0)
+						return (true);
+				}
+				return false;
+			}
 
             double getIntersectionDistance(const Ray &ray) const{
                 double a = ray.getDirection().dot(ray.getDirection());
