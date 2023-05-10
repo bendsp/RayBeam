@@ -58,14 +58,27 @@
 RayTracer::RGB Core::castLightingRay(RayTracer::RGB materialColor, Math::HitPoint objectHitpoint)
 {
     double intensity = _ambient;
-    int ar = static_cast<int>(materialColor.r * _ambient);
-    int ag = static_cast<int>(materialColor.g * _ambient);
-    int ab = static_cast<int>(materialColor.b * _ambient);
-    RayTracer::RGB color = {ar, ag, ab};
-
+    Math::Vector3D toLight;
+    RayTracer::Ray shadowRay;
+    Math::HitPoint shadowHitpoint;
+    // TODO: get the formula right
     for (int i = 0; i < _lights.size(); ++i) {
+        shadowRay = RayTracer::Ray(objectHitpoint.hitPointVar, _lights[i]->getPosition() - objectHitpoint.hitPointVar);
+        for (int j = 0; j < _primitives.size(); ++j) {
+            shadowHitpoint = _primitives[j]->hits(shadowRay);
+            // if (shadowHitpoint.hit == false || shadowHitpoint.distance > (objectHitpoint.hitPointVar - _lights[i]->getPosition())) {
+            if (shadowHitpoint.hit == false) {
+                intensity += 0.3;
+            } else {
+                // std::cout << "balls" << std::endl;
+            }
+        }
         intensity += _lights[i]->getIntensity(objectHitpoint.hitPointVar);
     }
+    int ar = static_cast<int>(materialColor.r * intensity);
+    int ag = static_cast<int>(materialColor.g * intensity);
+    int ab = static_cast<int>(materialColor.b * intensity);
+    RayTracer::RGB color = {ar, ag, ab};
     return color;
 }
 

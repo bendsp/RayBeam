@@ -20,7 +20,7 @@ namespace RayTracer {
             virtual double getBrightness() const = 0;
             virtual void setBrightness(double brightness) = 0;
             virtual double getIntensity(const Math::Point3D &point) const = 0;
-
+            virtual Math::Point3D getPosition() const = 0;
             virtual void displayLight() const = 0;
     };
 
@@ -34,7 +34,7 @@ namespace RayTracer {
             //* Methods
             //TODO: write methods
             double getBrightness() const override {
-                return 0;
+                return _diffuse;
             }
 
             void setBrightness(double brightness) override {
