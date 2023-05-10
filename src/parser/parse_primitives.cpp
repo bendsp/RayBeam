@@ -51,7 +51,7 @@ void parsePlanes(const libconfig::Setting &primitives, Core *core)
             int r = static_cast<int>(color["r"]);
             int g = static_cast<int>(color["g"]);
             int b = static_cast<int>(color["b"]);
-            core->addPrimitive(new RayTracer::Plane(position, axis, {r, g, b}));
+            core->addPrimitive(new RayTracer::Plane(-1 * position, axis, {r, g, b}));
         }
     } catch (const libconfig::SettingNotFoundException &nfex) {
     }

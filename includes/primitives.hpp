@@ -131,8 +131,8 @@ namespace RayTracer {
                 const Math::Point3D intersection1 = O + (D * t1);
                 const Math::Point3D intersection2 = O + (D * t2);
 
-                const double dist1 =(intersection1 - _base).length();
-                const double dist2 =(intersection2 - _base).length();
+                const double dist1 = (intersection1 - _base).length();
+                const double dist2 = (intersection2 - _base).length();
 
                 if (dist1 < height && dist2 < height) {
                     hitPoint.hit = true;
@@ -154,51 +154,41 @@ namespace RayTracer {
             }
 
             double getIntersectionDistance(const Ray &ray) const{
-                // Calcul de la hauteur et de la pente du cône
-                // const double height = sqrt(pow(_head.x - _base.x, 2) + pow(_head.y - _base.y, 2) + pow(_head.z - _base.z, 2));
-                // const double slope = (_base.y - _head.y) / height;
+                const double height = (_head - _base).length();
+                const double slope = _radius / height;
+                const Math::Point3D O = ray.getOrigin();
+                const Math::Vector3D D = ray.getDirection();
+                const double a = (D.x * D.x) + (D.z * D.z) - (slope * slope * D.y * D.y);
+                const double b = 2 * (O.x * D.x + O.y * D.y - slope * slope * O.z * D.z);
+                const double c = (O.x * O.x) + (O.y * O.y) - (slope * slope * O.z * O.z);
+                const double discriminant = b * b - 4 * a * c;
+                if (discriminant < 0) {
+                    return std::numeric_limits<double>::infinity();
+                }
 
-                // // Paramétrage du rayon
-                // const Math::Point3D O = ray._origin - _base;
-                // const Math::Vector3D D = ray._direction.normalized();
+                const double t1 = (-b - std::sqrt(discriminant)) / (2 * a);
+                const double t2 = (-b + std::sqrt(discriminant)) / (2 * a);
 
-                // // Calcul des coefficients de l'équation quadratique
-                // const double a = pow(D.x, 2) + pow(D.z, 2) - pow(D.y, 2) * pow(slope, 2);
-                // const double b = 2 * (O.x * D.x + O.z * D.z - O.y * pow(slope, 2) * pow(height - O.y, 2));
-                // const double c = pow(O.x, 2) + pow(O.z, 2) - pow(O.y, 2) * pow(slope, 2) * pow(height - O.y, 2);
+                const Math::Point3D intersection1 = O + (D * t1);
+                const Math::Point3D intersection2 = O + (D * t2);
 
-                // // Résolution de l'équation quadratique
-                // const double discriminant = pow(b, 2) - 4 * a * c;
-                // if (discriminant == 0) {
-                //     // Un seul point d'intersection
-                //     const double t = -b / (2 * a);
-                //     const Math::Point3D P = O + D * t;
-                //     const double dist = (P - _head).length();
-                //     if (t >= 0 && dist <= height && dist >= 0) {
-                //         // Le point d'intersection est dans le bon intervalle de distance
-                //         return t;
-                //     }
-                // } else {
-                //     // Deux points d'intersection
-                //     const double t1 = (-b + sqrt(discriminant)) / (2 * a);
-                //     const double t2 = (-b - sqrt(discriminant)) / (2 * a);
-                //     const Math::Point3D P1 = O + D * t1;
-                //     const Math::Point3D P2 = O + D * t2;
-                //     const double dist1 = (P1 - _head).length();
-                //     const double dist2 = (P2 - _head).length();
-                //     if (t1 >= 0 && dist1 <= height && dist1 >= 0) {
-                //         // Le premier point d'intersection est dans le bon intervalle de distance
-                //         return t1;
-                //     } else if (t2 >= 0 && dist2 <= height && dist2 >= 0) {
-                //         // Le deuxième point d'intersection est dans le bon intervalle de distance
-                //         return t2;
-                //     }
-                // }
-                return 0;
+                const double dist1 = (intersection1 - _base).length();
+                const double dist2 = (intersection2 - _base).length();
+
+                if (dist1 < height && dist2 < height) {
+                    return std::min(t1, t2);
+                } else if (dist1 < height && dist2 > height) {
+                    return t1;
+                } else if (dist1 > height && dist2 < height) {
+                    return t2;
+                }
+                return std::numeric_limits<double>::infinity();
             }
 
             Math::Point3D getIntersectionPoint(const Ray &ray) const{
-                return Math::Point3D();
+                double t = getIntersectionDistance(ray);
+                Math::Point3D point = ray.getOrigin() + ray.getDirection() * t;
+                return point;
             }
 
             void translate(const Math::Vector3D &translation) {
