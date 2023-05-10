@@ -31,6 +31,9 @@ class Core {
         const double getAmbient() {
             return _ambient;
         }
+        const double getDiffuse() {
+            return _diffuse;
+        }
 
         // * Setters / Adders
         void setCamera(const RayTracer::Camera &camera) {
@@ -45,6 +48,9 @@ class Core {
         void setAmbient(double ambient) {
             _ambient = ambient;
         }
+        void setDiffuse(double diffuse) {
+            _diffuse = diffuse;
+        }
 
         // * Methods
         void displayScene(void);
@@ -57,6 +63,8 @@ class Core {
         std::vector <RayTracer::IPrimitive *> _primitives;
         std::vector <RayTracer::ILight *> _lights;
         double _ambient;
+        double _diffuse;
+
         //* Exception
         class CoreException : public std::exception {
             public:
