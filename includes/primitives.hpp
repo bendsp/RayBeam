@@ -110,38 +110,48 @@ namespace RayTracer {
 
             //* Methods
 
-            // Math::HitPoint hits(const Ray &ray) const{
-            //     const double height = (_head - _base).length();
-            //     const double slope = _radius / height;
-            //     const Math::Point3D O = ray.getOrigin();
-            //     const Math::Vector3D D = ray.getDirection();
-            //     const double a = (D.x * D.x) + (D.z * D.z) - (slope * slope * D.y * D.y);
-            //     const double b = 2 * (O.x * D.x + O.y * D.y - slope * slope * O.z * D.z);
-            //     const double c = (O.x * O.x) + (O.y * O.y) - (slope * slope * O.z * O.z);
+            Math::HitPoint hits(const Ray &ray) const{
+                const double height = (_head - _base).length();
+                const double slope = _radius / height;
+                const Math::Point3D O = ray.getOrigin();
+                const Math::Vector3D D = ray.getDirection();
+                const double a = (D.x * D.x) + (D.z * D.z) - (slope * slope * D.y * D.y);
+                const double b = 2 * (O.x * D.x + O.y * D.y - slope * slope * O.z * D.z);
+                const double c = (O.x * O.x) + (O.y * O.y) - (slope * slope * O.z * O.z);
+                Math::HitPoint hitPoint = Math::HitPoint();
+                const double discriminant = b * b - 4 * a * c;
+                if (discriminant < 0) {
 
-            //     const double discriminant = b * b - 4 * a * c;
-            //     if (discriminant < 0) {
-            //         return false;
-            //     }
+                    return hitPoint;
+                }
 
-            //     const double t1 = (-b - std::sqrt(discriminant)) / (2 * a);
-            //     const double t2 = (-b + std::sqrt(discriminant)) / (2 * a);
+                const double t1 = (-b - std::sqrt(discriminant)) / (2 * a);
+                const double t2 = (-b + std::sqrt(discriminant)) / (2 * a);
 
-            //     const Math::Point3D intersection1 = O + (D * t1);
-            //     const Math::Point3D intersection2 = O + (D * t2);
+                const Math::Point3D intersection1 = O + (D * t1);
+                const Math::Point3D intersection2 = O + (D * t2);
 
-            //     const double dist1 =(intersection1 - _base).length();
-            //     const double dist2 =(intersection2 - _base).length();
+                const double dist1 =(intersection1 - _base).length();
+                const double dist2 =(intersection2 - _base).length();
 
-            //     if (dist1 < height && dist2 < height) {
-            //         return true;
-            //     } else if (dist1 < height && dist2 > height) {
-            //         return true;
-            //     } else if (dist1 > height && dist2 < height) {
-            //         return true;
-            //     }
-            //     return false;
-            // }
+                if (dist1 < height && dist2 < height) {
+                    hitPoint.hit = true;
+                    hitPoint.distance = std::min(t1, t2);
+                    hitPoint.hitPointVar = Math::Point3D(ray.getOrigin() + ray.getDirection() * hitPoint.distance);
+                    return hitPoint;
+                } else if (dist1 < height && dist2 > height) {
+                    hitPoint.hit = true;
+                    hitPoint.distance = t1;
+                    hitPoint.hitPointVar = Math::Point3D(ray.getOrigin() + ray.getDirection() * hitPoint.distance);
+                    return hitPoint;
+                } else if (dist1 > height && dist2 < height) {
+                    hitPoint.hit = true;
+                    hitPoint.distance = t2;
+                    hitPoint.hitPointVar = Math::Point3D(ray.getOrigin() + ray.getDirection() * hitPoint.distance);
+                    return hitPoint;
+                }
+                return hitPoint;
+            }
 
             double getIntersectionDistance(const Ray &ray) const{
                 // Calcul de la hauteur et de la pente du cône

@@ -57,10 +57,33 @@ void parsePlanes(const libconfig::Setting &primitives, Core *core)
     }
 }
 
+void parseCones(const libconfig::Setting &primitives, Core *core)
+{
+    try {
+        const libconfig::Setting &cones = primitives["cones"];
+
+        for (int i = 0; i < cones.getLength(); ++i) {
+            const libconfig::Setting& cone = cones[i];
+            libconfig::Setting& base = cone["base"];
+            Math::Point3D basePoint = Math::Point3D(static_cast<int>(base["x"]), static_cast<int>(base["y"]), static_cast<int>(base["z"]));
+            libconfig::Setting& head = cone["head"];
+            Math::Point3D headPoint = Math::Point3D(static_cast<int>(head["x"]), static_cast<int>(head["y"]), static_cast<int>(head["z"]));
+            double radius = static_cast<int>(cone["r"]);
+            libconfig::Setting& color = cone["color"];
+            int r = static_cast<int>(color["r"]);
+            int g = static_cast<int>(color["g"]);
+            int b = static_cast<int>(color["b"]);
+            core->addPrimitive(new RayTracer::Cone(basePoint, headPoint, radius, {r, g, b}));
+        }
+    } catch (const libconfig::SettingNotFoundException &nfex) {
+    }
+}
+
 void parsePrimitives(const libconfig::Setting &root, Core *core)
 {
     const libconfig::Setting &primitives = root["primitives"];
 
     parseSpheres(primitives, core);
     parsePlanes(primitives, core);
+    parseCones(primitives, core);
 }
