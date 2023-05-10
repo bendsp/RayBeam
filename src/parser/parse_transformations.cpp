@@ -24,7 +24,7 @@ void parseTranslations(const libconfig::Setting &transformations, Core *core)
                 throw Core::CoreException("Invalid index for translation");
 
             Math::Vector3D translationVector(x, y, z);
-            core->_primitives[index - 1]->translate(translationVector);
+            core->_primitives[index]->translate(translationVector);
         }
 
     } catch (const libconfig::SettingNotFoundException &nfex) {
