@@ -23,7 +23,7 @@ void parseCamera(const libconfig::Setting &root, Core *core)
     core->_camera.setHeight(static_cast<int>(resolution["height"]));
     core->_camera.setOrigin(Math::Point3D(static_cast<int>(position["x"]), static_cast<int>(position["y"]), static_cast<int>(position["z"])));
     core->_camera.setFov(fov);
-    
+
     // calculate screen properties
     float aspect_ratio = static_cast<float>(core->_camera.getWidth()) / static_cast<float>(core->_camera.getHeight());
     float vertical_distance = 0.5f * core->_camera.getHeight() / tan(0.5f * fov);
@@ -41,8 +41,6 @@ void parseCamera(const libconfig::Setting &root, Core *core)
     Math::Vector3D screenCenterVec = cameraOriginVec + (core->_camera.getDirection() * core->_camera.getDistanceToScreen());
     Math::Point3D screenCenter = screenCenterVec.toPoint();
     core->_camera.setScreenCenter(screenCenter);
-
-    
 }
 
 int parseFile(char *filepath, Core *core)
