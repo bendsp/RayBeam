@@ -32,8 +32,8 @@ void parsePlanes(const libconfig::Setting &primitives, Core *core)
         const libconfig::Setting &planes = primitives["planes"];
 
         static std::unordered_map<std::string, RayTracer::Axis> axisMap = {
-            {"X", RayTracer::X},
-            {"Y", RayTracer::Y},
+            {"X", RayTracer::Y},
+            {"Y", RayTracer::X},
             {"Z", RayTracer::Z},
             {"x", RayTracer::X},
             {"y", RayTracer::Y},
