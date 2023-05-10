@@ -59,7 +59,6 @@ void parseRotations(const libconfig::Setting &transformations, Core *core)
 void parseTransformations(const libconfig::Setting &root, Core *core)
 {
     const libconfig::Setting &transformations = root["transformations"];
-    const libconfig::Setting &rotations = transformations["rotations"];
 
     parseTranslations(transformations, core);
     parseRotations(transformations, core);
