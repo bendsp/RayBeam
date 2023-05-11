@@ -61,17 +61,22 @@ RayTracer::RGB Core::castLightingRay(RayTracer::RGB materialColor, Math::HitPoin
     Math::Vector3D toLight;
     RayTracer::Ray shadowRay;
     Math::HitPoint shadowHitpoint;
-    // TODO: get the formula right
+    bool illuminated;
+
     for (int i = 0; i < _lights.size(); ++i) {
+        bool illuminated = true;
         shadowRay = RayTracer::Ray(objectHitpoint.hitPointVar, _lights[i]->getPosition() - objectHitpoint.hitPointVar);
         for (int j = 0; j < _primitives.size(); ++j) {
             shadowHitpoint = _primitives[j]->hits(shadowRay);
             // if (shadowHitpoint.hit == false || shadowHitpoint.distance > (objectHitpoint.hitPointVar - _lights[i]->getPosition())) {
             if (shadowHitpoint.hit == false) {
-                intensity += 0.3;
-            } else {
-                // std::cout << "balls" << std::endl;
+                continue;
             }
+            if (abs(shadowHitpoint.distance) < 0.001) {
+                // std::cout << shadowHitpoint.distance << std::endl;
+                continue;
+            }
+            intensity += 0.3;
         }
         intensity += _lights[i]->getIntensity(objectHitpoint.hitPointVar);
     }
