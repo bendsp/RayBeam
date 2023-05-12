@@ -112,46 +112,6 @@ RayTracer::RGB Core::castCameraRay(RayTracer::Ray ray)
 
 // void Core::displayScene(void) {
     
-//     int width = _camera._width;
-//     int height = _camera._height;
-//     double aspectRatio = static_cast<float>(width) / static_cast<float>(height);
-//     double width3D = 2 * _camera.getDistanceToScreen() * tan(0.5 * _camera.getFov());
-//     double height3D = width3D / (aspectRatio);
-//     Math::Vector3D right_vector = _camera.getRight();
-//     Math::Vector3D up_vector = _camera.getUp();
-//     Math::Vector3D horizontal_step = _camera.getRight() * (width3D / (width - 1));
-//     Math::Vector3D vertical_step = _camera.getUp() * (height3D / (height - 1));
-//     Math::Vector3D rayDirection;
-//     Math::Point3D camera_origin = _camera.getOrigin();
-//     Math::Point3D screen_center = _camera.getScreenCenter();
-//     Math::Point3D current_point;
-//     RayTracer::Ray current_ray;
-//     RayTracer::RGB color;
-
-//     std::ofstream outFile("output.ppm");
-    
-//     outFile << "P3\n" << width << " " << height << "\n255\n";
-//     for (int y = height - 1; y >= 0;--y) {
-//         for (int x = width - 1; x >= 0; --x) {
-//             double fx = static_cast<double>(x);
-//             double fy = static_cast<double>(y);
-//             current_point = screen_center - (right_vector * (0.5 * width3D)) + (horizontal_step * fx) + (up_vector * (0.5 * height3D)) - (vertical_step * fy);
-//             rayDirection = (current_point - camera_origin).normalized();
-//             current_ray = RayTracer::Ray(camera_origin, rayDirection);
-//             color = castCameraRay(current_ray);
-//             int ir = static_cast<int>(color.r);
-//             int ig = static_cast<int>(color.g);
-//             int ib = static_cast<int>(color.b);
-    
-//             outFile << ir << " " << ig << " " << ib << "\n";
-//         }
-//     }
-
-//     outFile.close();
-// }
-
-// void Core::displayScene(void) {
-    
 //     // Set up the SFML window, texture and sprite
 //     sf::RenderWindow window(sf::VideoMode(_camera._width, _camera._height), "Raytracer Output");
 //     sf::Texture texture;
@@ -195,7 +155,8 @@ RayTracer::RGB Core::castCameraRay(RayTracer::Ray ray)
 //             outFile << ir << " " << ig << " " << ib << "\n";
 
 //             // Convert color to RGBA and store in pixel array
-//             int index = ((height - 1 - y) * width + x) * 4;
+//             // Note the change in computation of index
+//             int index = ((height - 1 - y) * width + (width - 1 - x)) * 4;
 //             pixels[index + 0] = ir;
 //             pixels[index + 1] = ig;
 //             pixels[index + 2] = ib;
@@ -216,24 +177,17 @@ RayTracer::RGB Core::castCameraRay(RayTracer::Ray ray)
 //     while (window.isOpen()) {
 //         sf::Event event;
 //         while (window.pollEvent(event)) {
-//             if (event.type == sf::Event::Closed) { window.close(); }
+//             if (event.type == sf::Event::Closed) {
+//                 window.close();
+//             }
 //         }
 //     }
 
 //     // Free pixel data array
 //     delete[] pixels;
 // }
-void Core::displayScene(void) {
-    
-    // Set up the SFML window, texture and sprite
-    sf::RenderWindow window(sf::VideoMode(_camera._width, _camera._height), "Raytracer Output");
-    sf::Texture texture;
-    texture.create(_camera._width, _camera._height);
-    sf::Sprite sprite;
 
-    // Allocate pixel data array
-    sf::Uint8* pixels = new sf::Uint8[_camera._width * _camera._height * 4];
-
+void Core::renderScene(sf::RenderWindow &window, sf::Texture &texture, sf::Sprite &sprite, sf::Uint8* pixels) {
     int width = _camera._width;
     int height = _camera._height;
     double aspectRatio = static_cast<float>(width) / static_cast<float>(height);
@@ -285,13 +239,55 @@ void Core::displayScene(void) {
     }
 
     outFile.close();
+}
+
+void Core::displayScene(void) {
+    // Set up the SFML window, texture and sprite
+    sf::RenderWindow window(sf::VideoMode(_camera._width, _camera._height), "Raytracer Output");
+    sf::Texture texture;
+    texture.create(_camera._width, _camera._height);
+    sf::Sprite sprite;
+
+    // Allocate pixel data array
+    sf::Uint8* pixels = new sf::Uint8[_camera._width * _camera._height * 4];
+
+    // Render the scene for the first time
+    renderScene(window, texture, sprite, pixels);
 
     // Wait for window to be closed
     while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event)) {
-            if (event.type == sf::Event::Closed) {
-                window.close();
+            switch (event.type) {
+                case sf::Event::Closed:
+                    window.close();
+                    break;
+                case sf::Event::KeyReleased:
+                    if (event.key.code == sf::Keyboard::Left) {
+                        _camera.moveLeft(10); // Update your camera position here
+                        renderScene(window, texture, sprite, pixels);
+                    }
+                    else if (event.key.code == sf::Keyboard::Right) {
+                        _camera.moveRight(10); // Update your camera position here
+                        renderScene(window, texture, sprite, pixels);
+                    }
+                    else if (event.key.code == sf::Keyboard::Up) {
+                        _camera.moveUp(10); // Update your camera position here
+                        renderScene(window, texture, sprite, pixels);
+                    }
+                    else if (event.key.code == sf::Keyboard::Down) {
+                        _camera.moveDown(10); // Update your camera position here
+                        renderScene(window, texture, sprite, pixels);
+                    }
+                    else if (event.key.code == sf::Keyboard::Z) {
+                        _camera.moveForward(10); // Update your camera position here
+                        renderScene(window, texture, sprite, pixels);
+                    }
+                    else if (event.key.code == sf::Keyboard::S) {
+                        _camera.moveBackward(10); // Update your camera position here
+                        renderScene(window, texture, sprite, pixels);
+                    }
+                    break;
             }
         }
     }
