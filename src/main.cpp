@@ -10,6 +10,11 @@
 #include "raytracer.hpp"
 #include "primitives.hpp"
 #include "core.hpp"
+#include "menu.hpp"
+#include <stdlib.h>
+#include <string.h>
+#include <thread>
+#include <chrono>
 
 void Core::printCoreInfo(void)
 {
@@ -36,16 +41,85 @@ void Core::printCoreInfo(void)
     }
 }
 
+// int main(int ac, char **av)
+// {
+//     Core core;
+//     try {
+//         parseFile(av[1], &core);
+//         core.displayScene();
+//     } catch (Core::CoreException &e) {
+//         std::cerr << e.what() << std::endl;
+//         return (84);
+//     }
+//     core.printCoreInfo();
+
+//     return (0);
+// }
+
 int main(int ac, char **av)
 {
     Core core;
-    try {
-        parseFile(av[1], &core);
-        core.displayScene();
-    } catch (Core::CoreException &e) {
-        std::cerr << e.what() << std::endl;
-        return (84);
+
+    // Define the file names
+    std::vector<std::string> fileNames = {"example.cfg", "config.cfg"};
+
+    // Create the SFML window
+    sf::RenderWindow window(sf::VideoMode(800, 600), "Raytracer Output");
+
+    // Create the menu
+    Menu menu(window.getSize().x, window.getSize().y, fileNames);
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
+    // Event handling loop
+    while (window.isOpen())
+    {
+        sf::Event event;
+
+        while (window.pollEvent(event))
+        {
+            switch (event.type)
+            {
+            case sf::Event::KeyReleased:
+                switch (event.key.code)
+                {
+                case sf::Keyboard::Up:
+                    menu.MoveUp();
+                    break;
+                case sf::Keyboard::Down:
+                    menu.MoveDown();
+                    break;
+                case sf::Keyboard::Return:
+                    {
+                        Core core;
+                        try {
+                            char* fileName = strdup(fileNames[menu.GetPressedItem()].c_str());
+                            parseFile(fileName, &core);
+                            free(fileName); // free the allocated memory
+                            core.displayScene();
+                        } catch (Core::CoreException &e) {
+                            std::cerr << e.what() << std::endl;
+                            return (84);
+                        }
+                    }
+                    break;
+                }
+
+                break;
+            case sf::Event::Closed:
+                window.close();
+
+                break;
+            }
+        }
+
+        window.clear();
+
+        menu.draw(window);
+
+        window.display();
     }
+
     core.printCoreInfo();
 
     return (0);

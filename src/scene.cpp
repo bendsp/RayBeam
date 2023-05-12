@@ -299,4 +299,3 @@ void Core::displayScene(void) {
     // Free pixel data array
     delete[] pixels;
 }
-
