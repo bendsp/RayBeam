@@ -15,6 +15,7 @@
 #include <string.h>
 #include <thread>
 #include <chrono>
+#include <filesystem>
 
 void Core::printCoreInfo(void)
 {
@@ -61,7 +62,15 @@ int main(int ac, char **av)
     Core core;
 
     // Define the file names
-    std::vector<std::string> fileNames = {"example.cfg", "config.cfg"};
+    std::vector<std::string> fileNames;
+    std::vector<std::string> filePaths;
+    for (const auto & entry : std::filesystem::directory_iterator("scenes")) {
+        if (entry.path().extension() == ".cfg") {
+            fileNames.push_back(entry.path().filename().string());
+            filePaths.push_back("scenes/" + entry.path().filename().string());
+        }
+    }
+
 
     // Create the SFML window
     sf::RenderWindow window(sf::VideoMode(800, 600), "Raytracer Output");
@@ -93,9 +102,14 @@ int main(int ac, char **av)
                     {
                         Core core;
                         try {
-                            char* fileName = strdup(fileNames[menu.GetPressedItem()].c_str());
-                            parseFile(fileName, &core);
-                            free(fileName); // free the allocated memory
+                                // If "Exit" is selected, close the window and exit the loop
+                            if (menu.GetPressedItem() == fileNames.size()) {
+                                window.close();
+                                break;
+                            }
+                            char* filePath = strdup(filePaths[menu.GetPressedItem()].c_str());
+                            parseFile(filePath, &core);
+                            free(filePath); // free the allocated memory
                             core.displayScene();
                         } catch (Core::CoreException &e) {
                             std::cerr << e.what() << std::endl;
@@ -104,7 +118,6 @@ int main(int ac, char **av)
                     }
                     break;
                 }
-
                 break;
             case sf::Event::Closed:
                 window.close();
