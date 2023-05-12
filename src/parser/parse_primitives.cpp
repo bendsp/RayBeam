@@ -79,6 +79,27 @@ void parseCones(const libconfig::Setting &primitives, Core *core)
     }
 }
 
+void parseCylindres(const libconfig::Setting &primitives, Core *core)
+{
+    try {
+        const libconfig::Setting &cylindres = primitives["cylindres"];
+
+        for (int i = 0; i < cylindres.getLength(); ++i) {
+            const libconfig::Setting& cylindre = cylindres[i];
+            libconfig::Setting& base = cylindre["base"];
+            Math::Point3D basePoint = Math::Point3D(static_cast<int>(base["x"]), static_cast<int>(base["y"]), static_cast<int>(base["z"]));
+            double height = static_cast<int>(cylindre["h"]);
+            double radius = static_cast<int>(cylindre["r"]);
+            libconfig::Setting& color = cylindre["color"];
+            int r = static_cast<int>(color["r"]);
+            int g = static_cast<int>(color["g"]);
+            int b = static_cast<int>(color["b"]);
+            core->addPrimitive(new RayTracer::Cylander(basePoint, height, radius, {r, g, b}));
+        }
+    } catch (const libconfig::SettingNotFoundException &nfex) {
+    }
+}
+
 void parsePrimitives(const libconfig::Setting &root, Core *core)
 {
     const libconfig::Setting &primitives = root["primitives"];
@@ -86,4 +107,5 @@ void parsePrimitives(const libconfig::Setting &root, Core *core)
     parseSpheres(primitives, core);
     parsePlanes(primitives, core);
     parseCones(primitives, core);
+    parseCylindres(primitives, core);
 }

@@ -57,6 +57,133 @@ namespace RayTracer {
             RGB _color;
     };
 
+    class Cylander: public APrimitive {
+        public:
+            Math::Point3D _base;
+            double _radius;
+            double _height;
+
+            //* Constructors
+            Cylander() : _base(), _radius(0), _height(0), APrimitive({0, 0, 0}) {}
+            Cylander(Math::Point3D base, double radius, double height, RGB color) : _base(base), _radius(radius), _height(height), APrimitive(color) {}
+            Cylander(const Cylander &c) : _base(c._base), _radius(c._radius), _height(c._height), APrimitive(c._color) {}
+            Cylander(Cylander &&c) : _base(c._base), _radius(c._radius), _height(c._height), APrimitive(c._color) {
+                c._base = Math::Point3D();
+                c._radius = 0;
+                c._height = 0;
+                c._color = {0, 0, 0};
+            }
+
+            //* Destructor
+            ~Cylander() = default;
+
+            //* Operators
+            Cylander &operator=(const Cylander &c){
+                if (this != &c) {
+                    _base = c._base;
+                    _radius = c._radius;
+                    _height = c._height;
+                    _color = c._color;
+                }
+                return *this;
+            }
+
+            Cylander &operator=(Cylander &&c) noexcept{
+                if (this != &c) {
+                    _base = c._base;
+                    _radius = c._radius;
+                    _height = c._height;
+                    _color = c._color;
+                    c._base = Math::Point3D();
+                    c._radius = 0;
+                    c._height = 0;
+                    c._color = {0, 0, 0};
+                }
+                return *this;
+            }
+
+            //* Methods
+
+            Math::HitPoint hits(const Ray& ray) const {
+                // First, we find the vector from the base to the head of the cone
+                Math::Vector3D axis = Math::Vector3D(0, 1, 0);
+
+                // Next, we find the axis projected onto the ray direction and normalize it
+                Math::Vector3D rayDir = ray.getDirection();
+                double t = (axis.dot(rayDir) * axis.dot(rayDir)) / (axis.dot(axis));
+                Math::Vector3D axisProjection = axis.normalized() * t;
+
+                // We then find the closest point on the ray to the cone axis
+                Math::Point3D closestPoint = ray.getOrigin() + axisProjection;
+
+                // Now we need to check if the closest point is within the bounds of the cone
+                double distance = (closestPoint - _base).magnitude();
+                if (distance > _radius) {
+                    return Math::HitPoint(false, 0, Math::Point3D());
+                }
+                printf("distance: %f\n", distance);
+                double height = axisProjection.magnitude();
+                if (height > _height) {
+                    return Math::HitPoint(false, 0, Math::Point3D());
+                }
+                printf("height: %f\n", height);
+                // Finally, we return the intersection point and distance
+                Math::Vector3D intersectionNormal = (closestPoint - _base).cross(axis).cross(closestPoint - _base + Math::Vector3D(0, _height, 0));
+                if (intersectionNormal.dot(rayDir) > 0) {
+                    intersectionNormal = intersectionNormal * -1;
+                }
+                return Math::HitPoint(true, (closestPoint - ray.getOrigin()).magnitude(), closestPoint);
+            }
+
+            double getIntersectionDistance(const Ray &ray) const{
+                // First, we find the vector from the base to the head of the cone
+                Math::Vector3D axis = Math::Vector3D(0, 1, 0);
+
+                // Next, we find the axis projected onto the ray direction and normalize it
+                Math::Vector3D rayDir = ray.getDirection();
+                double t = (axis.dot(rayDir) * axis.dot(rayDir)) / (axis.dot(axis));
+                Math::Vector3D axisProjection = axis.normalized() * t;
+
+                // We then find the closest point on the ray to the cone axis
+                Math::Point3D closestPoint = ray.getOrigin() + axisProjection;
+
+                // Now we need to check if the closest point is within the bounds of the cone
+                double distance = (closestPoint - _base).magnitude();
+                if (distance > _radius) {
+                    return std::numeric_limits<double>::infinity();
+                }
+                double height = axisProjection.magnitude();
+                if (height > _height) {
+                    return std::numeric_limits<double>::infinity();
+                }
+
+                // Finally, we return the intersection point and distance
+                Math::Vector3D intersectionNormal = (closestPoint - _base).cross(axis).cross(closestPoint - _base + Math::Vector3D(0, _height, 0));
+                if (intersectionNormal.dot(rayDir) > 0) {
+                    intersectionNormal = intersectionNormal * -1;
+                }
+                return (closestPoint - ray.getOrigin()).magnitude();
+            }
+
+            Math::Point3D getIntersectionPoint(const Ray &ray) const{
+                double t = getIntersectionDistance(ray);
+                Math::Point3D point = ray.getOrigin() + ray.getDirection() * t;
+                return point;
+            }
+
+            void translate(const Math::Vector3D &translation) {
+                _base += translation;
+            }
+
+            void displayPrimitive() const{
+                std::cout << "[CYLINDER]" << std::endl;
+                std::cout << "Base : {" << _base.x << ", " << _base.y << ", " << _base.z << "}" << std::endl;
+                std::cout << "Radius: " << _radius << std::endl;
+                std::cout << "Height: " << _height << std::endl;
+                std::cout << "Color : {" << _color.r << ", " << _color.g << ", " << _color.b << "}" << std::endl;
+            }
+    };
+
     class Cone: public APrimitive {
         public:
             //* Attributes
@@ -110,79 +237,65 @@ namespace RayTracer {
 
             //* Methods
 
-            Math::HitPoint hits(const Ray &ray) const{
-                const double height = (_head - _base).length();
-                const double slope = _radius / height;
-                const Math::Point3D O = ray.getOrigin();
-                const Math::Vector3D D = ray.getDirection();
-                const double a = (D.x * D.x) + (D.z * D.z) - (slope * slope * D.y * D.y);
-                const double b = 2 * (O.x * D.x + O.y * D.y - slope * slope * O.z * D.z);
-                const double c = (O.x * O.x) + (O.y * O.y) - (slope * slope * O.z * O.z);
-                Math::HitPoint hitPoint = Math::HitPoint();
-                const double discriminant = b * b - 4 * a * c;
-                if (discriminant < 0) {
+            Math::HitPoint hits(const Ray& ray) const {
+                // First, we find the vector from the base to the head of the cone
+                Math::Vector3D axis = _head - _base;
 
-                    return hitPoint;
+                // Next, we find the axis projected onto the ray direction and normalize it
+                Math::Vector3D rayDir = ray.getDirection();
+                double t = (axis.dot(rayDir) * axis.dot(rayDir)) / (axis.dot(axis));
+                Math::Vector3D axisProjection = axis.normalized() * t;
+
+                // We then find the closest point on the ray to the cone axis
+                Math::Point3D closestPoint = ray.getOrigin() + axisProjection;
+
+                // Now we need to check if the closest point is within the bounds of the cone
+                double distance = (closestPoint - _base).magnitude();
+                if (distance > _radius) {
+                    return Math::HitPoint(false, 0, Math::Point3D());
                 }
-
-                const double t1 = (-b - std::sqrt(discriminant)) / (2 * a);
-                const double t2 = (-b + std::sqrt(discriminant)) / (2 * a);
-
-                const Math::Point3D intersection1 = O + (D * t1);
-                const Math::Point3D intersection2 = O + (D * t2);
-
-                const double dist1 = (intersection1 - _base).length();
-                const double dist2 = (intersection2 - _base).length();
-
-                if (dist1 < height && dist2 < height) {
-                    hitPoint.hit = true;
-                    hitPoint.distance = std::min(t1, t2);
-                    hitPoint.hitPointVar = Math::Point3D(ray.getOrigin() + ray.getDirection() * hitPoint.distance);
-                    return hitPoint;
-                } else if (dist1 < height && dist2 > height) {
-                    hitPoint.hit = true;
-                    hitPoint.distance = t1;
-                    hitPoint.hitPointVar = Math::Point3D(ray.getOrigin() + ray.getDirection() * hitPoint.distance);
-                    return hitPoint;
-                } else if (dist1 > height && dist2 < height) {
-                    hitPoint.hit = true;
-                    hitPoint.distance = t2;
-                    hitPoint.hitPointVar = Math::Point3D(ray.getOrigin() + ray.getDirection() * hitPoint.distance);
-                    return hitPoint;
+                printf("distance: %f\n", distance);
+                double height = axisProjection.magnitude();
+                if (height > axis.magnitude()) {
+                    return Math::HitPoint(false, 0, Math::Point3D());
                 }
-                return hitPoint;
+                printf("height: %f\n", height);
+                // Finally, we return the intersection point and distance
+                Math::Vector3D intersectionNormal = (closestPoint - _base).cross(axis).cross(closestPoint - _head);
+                if (intersectionNormal.dot(rayDir) > 0) {
+                    intersectionNormal = intersectionNormal * -1;
+                }
+                return Math::HitPoint(true, (closestPoint - ray.getOrigin()).magnitude(), closestPoint);
             }
 
             double getIntersectionDistance(const Ray &ray) const{
-                const double height = (_head - _base).length();
-                const double slope = _radius / height;
-                const Math::Point3D O = ray.getOrigin();
-                const Math::Vector3D D = ray.getDirection();
-                const double a = (D.x * D.x) + (D.z * D.z) - (slope * slope * D.y * D.y);
-                const double b = 2 * (O.x * D.x + O.y * D.y - slope * slope * O.z * D.z);
-                const double c = (O.x * O.x) + (O.y * O.y) - (slope * slope * O.z * O.z);
-                const double discriminant = b * b - 4 * a * c;
-                if (discriminant < 0) {
+                // First, we find the vector from the base to the head of the cone
+                Math::Vector3D axis = _head - _base;
+
+                // Next, we find the axis projected onto the ray direction and normalize it
+                Math::Vector3D rayDir = ray.getDirection();
+                double t = (axis.dot(rayDir) * axis.dot(rayDir)) / (axis.dot(axis));
+                Math::Vector3D axisProjection = axis.normalized() * t;
+
+                // We then find the closest point on the ray to the cone axis
+                Math::Point3D closestPoint = ray.getOrigin() + axisProjection;
+
+                // Now we need to check if the closest point is within the bounds of the cone
+                double distance = (closestPoint - _base).magnitude();
+                if (distance > _radius) {
+                    return std::numeric_limits<double>::infinity();
+                }
+                double height = axisProjection.magnitude();
+                if (height > axis.magnitude()) {
                     return std::numeric_limits<double>::infinity();
                 }
 
-                const double t1 = (-b - std::sqrt(discriminant)) / (2 * a);
-                const double t2 = (-b + std::sqrt(discriminant)) / (2 * a);
-
-                const Math::Point3D intersection1 = O + (D * t1);
-                const Math::Point3D intersection2 = O + (D * t2);
-
-                const double dist1 = (intersection1 - _base).length();
-                const double dist2 = (intersection2 - _base).length();
-
-                if (dist1 < height && dist2 < height) {
-                    return std::min(t1, t2);
-                } else if (dist1 < height && dist2 > height) {
-                    return t1;
-                } else if (dist1 > height && dist2 < height) {
-                    return t2;
+                // Finally, we return the intersection point and distance
+                Math::Vector3D intersectionNormal = (closestPoint - _base).cross(axis).cross(closestPoint - _head);
+                if (intersectionNormal.dot(rayDir) > 0) {
+                    intersectionNormal = intersectionNormal * -1;
                 }
-                return std::numeric_limits<double>::infinity();
+                return (closestPoint - ray.getOrigin()).magnitude();
             }
 
             Math::Point3D getIntersectionPoint(const Ray &ray) const{

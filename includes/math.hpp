@@ -161,6 +161,15 @@ class Math {
                 return sqrt(x * x + y * y + z * z);
             }
 
+            double magnitude() const {
+                return sqrt(x * x + y * y + z * z);
+            }
+
+            Math::Vector3D cross (const Math::Vector3D &v) const {
+                return Math::Vector3D(y * v.z - z * v.y,
+                                      z * v.x - x * v.z,
+                                      x * v.y - y * v.x);
+            }
             Vector3D normalized() const {
                 double magnitude = std::sqrt(x * x + y * y + z * z);
                 if (magnitude == 0)
@@ -241,6 +250,14 @@ class Math {
                 return *this;
             }
 
+            double dot(const Vector3D &v) const {
+                return x * v.x + y * v.y + z * v.z;
+            }
+
+            double length() const {
+                return sqrt(x * x + y * y + z * z);
+            }
+
             Point3D operator+(const Vector3D& vec) const {
                 return Point3D(x + vec.x, y + vec.y, z + vec.z);
             }
@@ -249,9 +266,44 @@ class Math {
             //     return Point3D(x - p1.x, y - p1.y, z - p1.z);
             // }
 
+            Point3D &operator-=(const Vector3D &v) {
+                x -= v.x;
+                y -= v.y;
+                z -= v.z;
+                return *this;
+            }
+
+            Point3D operator-(const Vector3D& vec) const {
+                return Point3D(x - vec.x, y - vec.y, z - vec.z);
+            }
+
             Point3D operator+(const Point3D &p1) {
                 return Point3D(x + p1.x, y + p1.y, z + p1.z);
             }
+
+            Point3D operator*(double f) const {
+                return Point3D(x * f, y * f, z * f);
+            }
+
+            Point3D &operator*=(double f) {
+                x *= f;
+                y *= f;
+                z *= f;
+                return *this;
+            }
+
+            Point3D operator/(double f) const {
+                return Point3D(x / f, y / f, z / f);
+            }
+
+            Point3D &operator/=(double f) {
+                x /= f;
+                y /= f;
+                z /= f;
+                return *this;
+            }
+
+            
 
             Point3D &operator=(const Vector3D &v) {
                 x = v.x;
@@ -273,15 +325,13 @@ class Math {
                 return result;
             }
 
-            Point3D &operator-=(const Vector3D &v) {
-                x -= v.x;
-                y -= v.y;
-                z -= v.z;
-                return *this;
-            }
+            
 
-            Point3D operator-(const Vector3D& vec) const {
-                return Point3D(x - vec.x, y - vec.y, z - vec.z);
+            Point3D normalized() const {
+                double magnitude = std::sqrt(x * x + y * y + z * z);
+                if (magnitude == 0)
+                    return Point3D(0, 0, -1);
+                return Point3D(x / magnitude, y / magnitude, z / magnitude);
             }
 
             friend Vector3D operator-(const Point3D p1, const Point3D p2) {
@@ -317,10 +367,10 @@ class Math {
     class HitPoint {
         public:
             bool hit;
-            float distance;
+            double distance;
             Math::Point3D hitPointVar;
             HitPoint() : hit(false), distance(0), hitPointVar(Math::Point3D()) {}
-            HitPoint(bool hit, float dst, Math::Point3D hitPointVar) : hit(hit), distance(dst), hitPointVar(hitPointVar) {}
+            HitPoint(bool hit, double dst, Math::Point3D hitPointVar) : hit(hit), distance(dst), hitPointVar(hitPointVar) {}
             ~HitPoint() = default;
     };
 
