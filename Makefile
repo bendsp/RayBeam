@@ -21,7 +21,8 @@ CPPFLAGS = -I./includes/
 all: $(NAME)
 
 $(NAME): $(OBJ)
-		g++ -o $(NAME) $(OBJ) $(CPPFLAGS) -lconfig++
+		g++ -o $(NAME) $(OBJ) $(CPPFLAGS) -lconfig++ -lsfml-graphics -lsfml-window -lsfml-system
+
 
 clean:
 		rm -f $(OBJ)
