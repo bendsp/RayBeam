@@ -85,7 +85,7 @@ namespace RayTracer {
             int _width;
             int _height;
             double _fov;
-            
+
             //* Constructors
             Camera() : _origin(0, 0, 0), _forward(0, 0, 0) {}
 
@@ -129,6 +129,29 @@ namespace RayTracer {
                 return *this;
             }
 
+            void moveLeft(double distance) {
+                    _origin.x -= distance;
+            }
+
+            void moveRight(double distance) {
+                    _origin.x += distance;
+            }
+
+            void moveUp(double distance) {
+                    _origin.y += distance;
+            }
+
+            void moveDown(double distance) {
+                    _origin.y -= distance;
+            }
+
+            void moveForward(double distance) {
+                    _origin.z += distance;
+            }
+
+            void moveBackward(double distance) {
+                    _origin.z -= distance;
+            }
             //* Methods 
             // TODO: CHANGE THIS!
             RayTracer::Ray ray(double u, double v) const {

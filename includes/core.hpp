@@ -15,6 +15,8 @@
 #include "lights.hpp"
 #include "math.hpp"
 #include <vector>
+#include <SFML/Graphics.hpp>
+#include <SFML/Window.hpp>
 
 class Core {
     public:
@@ -57,6 +59,7 @@ class Core {
         RayTracer::RGB castCameraRay(RayTracer::Ray ray);
         RayTracer::RGB castLightingRay(RayTracer::RGB materialColor, Math::HitPoint objectHitpoint);
         void printCoreInfo(void);
+        void renderScene(sf::RenderWindow &window, sf::Texture &texture, sf::Sprite &sprite, sf::Uint8* pixels);
 
         // * Attributes
         RayTracer::Camera _camera;
