@@ -100,13 +100,14 @@ int main(int ac, char **av)
                     break;
                 case sf::Keyboard::Return:
                     {
+                        // If "Exit" is selected, close the window and exit the loop
+                        if (menu.GetPressedItem() == fileNames.size()) {
+                            window.close();
+                            break;
+                        }
+                    
                         Core core;
                         try {
-                                // If "Exit" is selected, close the window and exit the loop
-                            if (menu.GetPressedItem() == fileNames.size()) {
-                                window.close();
-                                break;
-                            }
                             char* filePath = strdup(filePaths[menu.GetPressedItem()].c_str());
                             parseFile(filePath, &core);
                             free(filePath); // free the allocated memory
