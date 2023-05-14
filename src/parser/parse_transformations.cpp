@@ -18,7 +18,6 @@ void parseTranslations(const libconfig::Setting &transformations, Core *core)
             int x = static_cast<int>(translation["x"]);
             int y = static_cast<int>(translation["y"]);
             int z = static_cast<int>(translation["z"]);
-            std::cout << "Translation: " << index << " > " << x << " " << y << " " << z << std::endl;
 
             if (core->_primitives.size() < index)
                 throw Core::CoreException("Invalid index for translation");
@@ -43,7 +42,6 @@ void parseRotations(const libconfig::Setting &transformations, Core *core)
             int x = static_cast<int>(rotation["x"]);
             int y = static_cast<int>(rotation["y"]);
             int z = static_cast<int>(rotation["z"]);
-            std::cout << "Rotation: " << index << " > " << angle << " " << x << " " << y << " " << z << std::endl;
 
             if (core->_primitives.size() < index)
                 throw Core::CoreException("Invalid index for rotation");

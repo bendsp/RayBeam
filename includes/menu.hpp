@@ -16,7 +16,7 @@ const int MAX_NUMBER_OF_ITEMS = 2;
 
 class Menu {
 public:
-    Menu(float width, float height, std::vector<std::string> & fileNames) {
+    Menu(float width, float height, std::vector<std::string> & fileNames, sf::RenderWindow &window) {
         if (!font.loadFromFile("font.ttf")) {
             // handle error
         }
@@ -28,7 +28,7 @@ public:
             text.setString(fileNames[i]);
             text.setCharacterSize(30);
             text.setFillColor(sf::Color::White);
-            text.setPosition(sf::Vector2f(width / 2, height / (fileNames.size() + 1) * (i + 1)));
+            text.setPosition(sf::Vector2f((width - 200) / 2, (200 + fileNames.size() + 50 * i)));
             menu.push_back(text);
         }
 

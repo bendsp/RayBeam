@@ -3,5 +3,4 @@ raytracer
 vgcore*
 .vscode/
 *.ppm
-*.png
 log

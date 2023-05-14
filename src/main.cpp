@@ -42,6 +42,19 @@ void Core::printCoreInfo(void)
     }
 }
 
+void displayLogo(sf::RenderWindow &window){
+    sf::Texture texture;
+    sf::Sprite sprite;
+    if (!texture.loadFromFile("rtx.png")) {
+        std::cout << "Error loading logo" << std::endl;
+        // handle error
+    }
+    sprite.setTexture(texture);
+    sprite.setPosition(sf::Vector2f(230, 30));
+    sprite.setScale(sf::Vector2f(0.1, 0.1));
+    window.draw(sprite);
+}
+
 int main(int ac, char **av)
 {
     Core core;
@@ -57,8 +70,7 @@ int main(int ac, char **av)
 
     sf::RenderWindow window(sf::VideoMode(800, 600), "Raytracer Output");
 
-    Menu menu(window.getSize().x, window.getSize().y, fileNames);
-
+    Menu menu(window.getSize().x, window.getSize().y, fileNames, window);
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
     while (window.isOpen())
@@ -108,12 +120,15 @@ int main(int ac, char **av)
 
         window.clear();
 
+        displayLogo(window);
+
         menu.draw(window);
 
         window.display();
     }
 
-    core.printCoreInfo();
+    // ? Uncomment to display core info
+    // core.printCoreInfo();
 
     return (0);
 }
