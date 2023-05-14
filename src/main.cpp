@@ -71,7 +71,6 @@ int main(int ac, char **av)
         }
     }
 
-
     // Create the SFML window
     sf::RenderWindow window(sf::VideoMode(800, 600), "Raytracer Output");
 
@@ -105,7 +104,7 @@ int main(int ac, char **av)
                             window.close();
                             break;
                         }
-                    
+
                         Core core;
                         try {
                             char* filePath = strdup(filePaths[menu.GetPressedItem()].c_str());

@@ -70,12 +70,10 @@ RayTracer::RGB Core::castLightingRay(RayTracer::RGB materialColor, Math::HitPoin
         shadowRay = RayTracer::Ray(objectHitpoint.hitPointVar, _lights[i]->getPosition() - objectHitpoint.hitPointVar);
         for (int j = 0; j < _primitives.size(); ++j) {
             shadowHitpoint = _primitives[j]->hits(shadowRay);
-            // if (shadowHitpoint.hit == false || shadowHitpoint.distance > (objectHitpoint.hitPointVar - _lights[i]->getPosition())) {
             if (shadowHitpoint.hit == false) {
                 continue;
             }
             if (abs(shadowHitpoint.distance) < 0.001) {
-                // std::cout << shadowHitpoint.distance << std::endl;
                 continue;
             }
             intensity += 0.3;
@@ -111,7 +109,7 @@ RayTracer::RGB Core::castCameraRay(RayTracer::Ray ray)
 }
 
 // void Core::displayScene(void) {
-    
+
 //     // Set up the SFML window, texture and sprite
 //     sf::RenderWindow window(sf::VideoMode(_camera._width, _camera._height), "Raytracer Output");
 //     sf::Texture texture;
@@ -138,7 +136,7 @@ RayTracer::RGB Core::castCameraRay(RayTracer::Ray ray)
 //     RayTracer::RGB color;
 
 //     std::ofstream outFile("output.ppm");
-    
+
 //     outFile << "P3\n" << width << " " << height << "\n255\n";
 //     for (int y = height - 1; y >= 0;--y) {
 //         for (int x = width - 1; x >= 0; --x) {
@@ -151,7 +149,7 @@ RayTracer::RGB Core::castCameraRay(RayTracer::Ray ray)
 //             int ir = static_cast<int>(color.r);
 //             int ig = static_cast<int>(color.g);
 //             int ib = static_cast<int>(color.b);
-    
+
 //             outFile << ir << " " << ig << " " << ib << "\n";
 
 //             // Convert color to RGBA and store in pixel array
@@ -205,7 +203,7 @@ void Core::renderScene(sf::RenderWindow &window, sf::Texture &texture, sf::Sprit
     RayTracer::RGB color;
 
     std::ofstream outFile("output.ppm");
-    
+
     outFile << "P3\n" << width << " " << height << "\n255\n";
     for (int y = height - 1; y >= 0;--y) {
         for (int x = width - 1; x >= 0; --x) {
@@ -218,7 +216,7 @@ void Core::renderScene(sf::RenderWindow &window, sf::Texture &texture, sf::Sprit
             int ir = static_cast<int>(color.r);
             int ig = static_cast<int>(color.g);
             int ib = static_cast<int>(color.b);
-    
+
             outFile << ir << " " << ig << " " << ib << "\n";
 
             // Convert color to RGBA and store in pixel array

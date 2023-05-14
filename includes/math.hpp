@@ -120,7 +120,7 @@ class Math {
                 z /= v.z;
                 return *this;
             }
-            
+
             Vector3D operator=(const Point3D &p) {
                 return Vector3D(p.x, p.y, p.z);
             }
@@ -303,8 +303,6 @@ class Math {
                 return *this;
             }
 
-            
-
             Point3D &operator=(const Vector3D &v) {
                 x = v.x;
                 y = v.y;
@@ -324,8 +322,6 @@ class Math {
                 result += v;
                 return result;
             }
-
-            
 
             Point3D normalized() const {
                 double magnitude = std::sqrt(x * x + y * y + z * z);

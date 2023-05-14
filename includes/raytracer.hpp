@@ -152,8 +152,7 @@ namespace RayTracer {
             void moveBackward(double distance) {
                     _origin.z -= distance;
             }
-            //* Methods 
-            // TODO: CHANGE THIS!
+            //* Methods
             RayTracer::Ray ray(double u, double v) const {
                 RayTracer::Ray ray;
                 return ray;
