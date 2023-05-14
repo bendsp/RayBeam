@@ -42,26 +42,10 @@ void Core::printCoreInfo(void)
     }
 }
 
-// int main(int ac, char **av)
-// {
-//     Core core;
-//     try {
-//         parseFile(av[1], &core);
-//         core.displayScene();
-//     } catch (Core::CoreException &e) {
-//         std::cerr << e.what() << std::endl;
-//         return (84);
-//     }
-//     core.printCoreInfo();
-
-//     return (0);
-// }
-
 int main(int ac, char **av)
 {
     Core core;
 
-    // Define the file names
     std::vector<std::string> fileNames;
     std::vector<std::string> filePaths;
     for (const auto & entry : std::filesystem::directory_iterator("scenes")) {
@@ -71,15 +55,12 @@ int main(int ac, char **av)
         }
     }
 
-    // Create the SFML window
     sf::RenderWindow window(sf::VideoMode(800, 600), "Raytracer Output");
 
-    // Create the menu
     Menu menu(window.getSize().x, window.getSize().y, fileNames);
 
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
-    // Event handling loop
     while (window.isOpen())
     {
         sf::Event event;
@@ -99,7 +80,6 @@ int main(int ac, char **av)
                     break;
                 case sf::Keyboard::Return:
                     {
-                        // If "Exit" is selected, close the window and exit the loop
                         if (menu.GetPressedItem() == fileNames.size()) {
                             window.close();
                             break;
@@ -109,7 +89,7 @@ int main(int ac, char **av)
                         try {
                             char* filePath = strdup(filePaths[menu.GetPressedItem()].c_str());
                             parseFile(filePath, &core);
-                            free(filePath); // free the allocated memory
+                            free(filePath);
                             core.displayScene();
                         } catch (Core::CoreException &e) {
                             std::cerr << e.what() << std::endl;
