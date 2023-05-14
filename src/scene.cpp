@@ -219,16 +219,13 @@ void Core::renderScene(sf::RenderWindow &window, sf::Texture &texture, sf::Sprit
 
             outFile << ir << " " << ig << " " << ib << "\n";
 
-            // Convert color to RGBA and store in pixel array
-            // Note the change in computation of index
             int index = ((height - 1 - y) * width + (width - 1 - x)) * 4;
             pixels[index + 0] = ir;
             pixels[index + 1] = ig;
             pixels[index + 2] = ib;
-            pixels[index + 3] = 255;  // alpha
+            pixels[index + 3] = 255;
         }
 
-        // Update the texture and display the updated image after each row
         texture.update(pixels);
         sprite.setTexture(texture);
         window.clear();
@@ -240,19 +237,15 @@ void Core::renderScene(sf::RenderWindow &window, sf::Texture &texture, sf::Sprit
 }
 
 void Core::displayScene(void) {
-    // Set up the SFML window, texture and sprite
     sf::RenderWindow window(sf::VideoMode(_camera._width, _camera._height), "Raytracer Output");
     sf::Texture texture;
     texture.create(_camera._width, _camera._height);
     sf::Sprite sprite;
 
-    // Allocate pixel data array
     sf::Uint8* pixels = new sf::Uint8[_camera._width * _camera._height * 4];
 
-    // Render the scene for the first time
     renderScene(window, texture, sprite, pixels);
 
-    // Wait for window to be closed
     while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event)) {
@@ -262,27 +255,27 @@ void Core::displayScene(void) {
                     break;
                 case sf::Event::KeyReleased:
                     if (event.key.code == sf::Keyboard::Left) {
-                        _camera.moveLeft(10); // Update your camera position here
+                        _camera.moveLeft(10);
                         renderScene(window, texture, sprite, pixels);
                     }
                     else if (event.key.code == sf::Keyboard::Right) {
-                        _camera.moveRight(10); // Update your camera position here
+                        _camera.moveRight(10);
                         renderScene(window, texture, sprite, pixels);
                     }
                     else if (event.key.code == sf::Keyboard::Up) {
-                        _camera.moveUp(10); // Update your camera position here
+                        _camera.moveUp(10);
                         renderScene(window, texture, sprite, pixels);
                     }
                     else if (event.key.code == sf::Keyboard::Down) {
-                        _camera.moveDown(10); // Update your camera position here
+                        _camera.moveDown(10);
                         renderScene(window, texture, sprite, pixels);
                     }
                     else if (event.key.code == sf::Keyboard::Z) {
-                        _camera.moveForward(10); // Update your camera position here
+                        _camera.moveForward(10);
                         renderScene(window, texture, sprite, pixels);
                     }
                     else if (event.key.code == sf::Keyboard::S) {
-                        _camera.moveBackward(10); // Update your camera position here
+                        _camera.moveBackward(10);
                         renderScene(window, texture, sprite, pixels);
                     }
                     break;
@@ -290,6 +283,5 @@ void Core::displayScene(void) {
         }
     }
 
-    // Free pixel data array
     delete[] pixels;
 }

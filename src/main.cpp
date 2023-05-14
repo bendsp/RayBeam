@@ -57,11 +57,23 @@ void Core::printCoreInfo(void)
 //     return (0);
 // }
 
+void displayLogo(sf::RenderWindow &window){
+    sf::Texture texture;
+    sf::Sprite sprite;
+    if (!texture.loadFromFile("rtx.png")) {
+        std::cout << "Error loading logo" << std::endl;
+        // handle error
+    }
+    sprite.setTexture(texture);
+    sprite.setPosition(sf::Vector2f(230, 30));
+    sprite.setScale(sf::Vector2f(0.1, 0.1));
+    window.draw(sprite);
+}
+
 int main(int ac, char **av)
 {
     Core core;
 
-    // Define the file names
     std::vector<std::string> fileNames;
     std::vector<std::string> filePaths;
     for (const auto & entry : std::filesystem::directory_iterator("scenes")) {
@@ -71,15 +83,12 @@ int main(int ac, char **av)
         }
     }
 
-    // Create the SFML window
     sf::RenderWindow window(sf::VideoMode(800, 600), "Raytracer Output");
 
-    // Create the menu
-    Menu menu(window.getSize().x, window.getSize().y, fileNames);
+    Menu menu(window.getSize().x, window.getSize().y, fileNames, window);
 
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
-    // Event handling loop
     while (window.isOpen())
     {
         sf::Event event;
@@ -99,7 +108,6 @@ int main(int ac, char **av)
                     break;
                 case sf::Keyboard::Return:
                     {
-                        // If "Exit" is selected, close the window and exit the loop
                         if (menu.GetPressedItem() == fileNames.size()) {
                             window.close();
                             break;
@@ -109,7 +117,7 @@ int main(int ac, char **av)
                         try {
                             char* filePath = strdup(filePaths[menu.GetPressedItem()].c_str());
                             parseFile(filePath, &core);
-                            free(filePath); // free the allocated memory
+                            free(filePath);
                             core.displayScene();
                         } catch (Core::CoreException &e) {
                             std::cerr << e.what() << std::endl;
@@ -128,12 +136,15 @@ int main(int ac, char **av)
 
         window.clear();
 
+        displayLogo(window);
+
         menu.draw(window);
 
         window.display();
     }
 
-    core.printCoreInfo();
+    // ? Uncomment to display core info
+    // core.printCoreInfo();
 
     return (0);
 }
