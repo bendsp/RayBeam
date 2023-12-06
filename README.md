@@ -27,6 +27,7 @@ Controls:
 WASD: camera movement
 ESCAPE or RETURN: exit simulation
 ```
+To configure the scene, see [Documentation for Raytracer configuration files](./docs/Raytracer.pdf)
 
 > [!NOTE]
 > This project is no longer being maintained, but any improvements are welcome.
