@@ -1,10 +1,3 @@
-/*
-** EPITECH PROJECT, 2022
-** bootstrapRaytracer
-** File description:
-** vector.hpp
-*/
-
 #pragma once
 
 #include <cmath>

@@ -1,10 +1,3 @@
-/*
-** EPITECH PROJECT, 2022
-** raytracer
-** File description:
-** file_parser.cpp
-*/
-
 #include "core.hpp"
 
 void parseCamera(const libconfig::Setting &root, Core *core)

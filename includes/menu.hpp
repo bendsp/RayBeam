@@ -1,10 +1,3 @@
-/*
-** EPITECH PROJECT, 2022
-** B-OOP-400-BER-4-1-raytracer-paul.thiebault
-** File description:
-** menu.hpp
-*/
-
 #pragma once
 
 #include <SFML/Graphics.hpp>

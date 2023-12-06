@@ -1,10 +1,3 @@
-/*
-** EPITECH PROJECT, 2022
-** bootstrapRaytracer
-** File description:
-** main.cpp
-*/
-
 #include <iostream>
 #include <fstream>
 #include "raytracer.hpp"

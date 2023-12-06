@@ -1,10 +1,3 @@
-/*
-** EPITECH PROJECT, 2022
-** raytracer
-** File description:
-** parse_primitives.cpp
-*/
-
 #include "core.hpp"
 
 void parseSpheres(const libconfig::Setting &primitives, Core *core)

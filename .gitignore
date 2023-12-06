@@ -1,4 +1,4 @@
-raytracer
+RayBeam
 *.o
 vgcore*
 .vscode/

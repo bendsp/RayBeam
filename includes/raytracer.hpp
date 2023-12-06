@@ -1,10 +1,3 @@
-/*
-** EPITECH PROJECT, 2022
-** bootstrapRaytracer
-** File description:
-** raytracer.hpp
-*/
-
 #pragma once
 
 #include "math.hpp"

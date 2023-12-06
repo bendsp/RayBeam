@@ -14,7 +14,7 @@ SRC =	src/main.cpp \
 
 OBJ = $(SRC:.cpp=.o)
 
-NAME = raytracer
+NAME = RayBeam
 
 CPPFLAGS = -I./includes/
 

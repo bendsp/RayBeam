@@ -1,10 +1,3 @@
-/*
-** EPITECH PROJECT, 2022
-** raytracer
-** File description:
-** parse_transformations.cpp
-*/
-
 #include "core.hpp"
 
 void parseTranslations(const libconfig::Setting &transformations, Core *core)

@@ -1,10 +1,3 @@
-/*
-** EPITECH PROJECT, 2022
-** raytracer
-** File description:
-** parse_lights.cpp
-*/
-
 #include "core.hpp"
 
 void parsePointLights(const libconfig::Setting &lights, Core *core)
