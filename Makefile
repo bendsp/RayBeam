@@ -16,12 +16,15 @@ OBJ = $(SRC:.cpp=.o)
 
 NAME = RayBeam
 
-CPPFLAGS = -I./includes/
+CXXFLAGS = -std=c++17 -Wall -Wextra
+PKG_CONFIG = PKG_CONFIG_PATH=/opt/homebrew/opt/sfml@2/lib/pkgconfig pkg-config
+CPPFLAGS = -I./includes/ $(shell $(PKG_CONFIG) --cflags libconfig++ sfml-graphics sfml-window sfml-system)
+LDLIBS = $(shell $(PKG_CONFIG) --libs libconfig++ sfml-graphics sfml-window sfml-system)
 
 all: $(NAME)
 
 $(NAME): $(OBJ)
-		g++ -o $(NAME) $(OBJ) $(CPPFLAGS) -lconfig++ -lsfml-graphics -lsfml-window -lsfml-system
+		g++ -o $(NAME) $(OBJ) $(LDLIBS)
 
 
 clean:

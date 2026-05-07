@@ -16,6 +16,11 @@ RayBeam requires the following to function:
 - Libconfig++
 - a Linux / Unix-based system
 
+On macOS, install the dependencies with Homebrew:
+```
+brew install libconfig sfml@2 pkg-config
+```
+
 # Usage
 
 To start the simulation:
