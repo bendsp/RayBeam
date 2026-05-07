@@ -3,6 +3,7 @@
 #include <libconfig.h++>
 #include <iostream>
 #include <memory>
+#include <string>
 #include <unordered_map>
 #include <vector>
 #include "primitives.hpp"
@@ -56,6 +57,7 @@ class Core {
         RayTracer::RGB castLightingRay(RayTracer::RGB materialColor, Math::HitPoint objectHitpoint);
         void printCoreInfo(void);
         void renderScene(sf::RenderWindow &window, sf::Texture &texture, sf::Sprite &sprite, sf::Uint8* pixels);
+        void exportPpm(const std::string &filepath, const sf::Uint8* pixels, int width, int height) const;
 
         // * Attributes
         RayTracer::Camera _camera;

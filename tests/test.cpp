@@ -5,8 +5,10 @@
 #include <cmath>
 #include <fstream>
 #include <iostream>
+#include <iterator>
 #include <limits>
 #include <string>
+#include <vector>
 
 static int failures = 0;
 
@@ -58,6 +60,42 @@ static void testColorClamping()
     expect(color.b == 255, "blue channel should clamp high values");
 }
 
+static void testPrimaryRayUsesNearestHitDistance()
+{
+    Core core;
+    core.setAmbient(1.0);
+    core.addPrimitive(std::make_unique<RayTracer::Sphere>(Math::Point3D(0, 0, 8), 1, RayTracer::RGB{255, 0, 0}));
+    core.addPrimitive(std::make_unique<RayTracer::Sphere>(Math::Point3D(0, 0, 5), 1, RayTracer::RGB{0, 255, 0}));
+
+    RayTracer::RGB color = core.castCameraRay({{0, 0, 0}, {0, 0, 1}});
+
+    expect(color.r == 0, "primary ray should not choose farther red sphere");
+    expect(color.g == 255, "primary ray should choose nearest green sphere");
+    expect(color.b == 0, "primary ray nearest hit blue channel should match object color");
+}
+
+static void testBinaryPpmExport()
+{
+    Core core;
+    std::string path = "/tmp/raybeam_export_test.ppm";
+    std::vector<sf::Uint8> pixels = {
+        255, 0, 0, 255,
+        0, 128, 255, 255
+    };
+
+    core.exportPpm(path, pixels.data(), 2, 1);
+
+    std::ifstream file(path, std::ios::binary);
+    std::string contents((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+    std::string header = "P6\n2 1\n255\n";
+
+    expect(contents.rfind(header, 0) == 0, "binary PPM should have a P6 header");
+    expect(contents.size() == header.size() + 6, "binary PPM should write exactly 3 bytes per pixel");
+    expect(static_cast<unsigned char>(contents[header.size() + 0]) == 255, "binary PPM should preserve red byte");
+    expect(static_cast<unsigned char>(contents[header.size() + 4]) == 128, "binary PPM should preserve green byte");
+    expect(static_cast<unsigned char>(contents[header.size() + 5]) == 255, "binary PPM should preserve blue byte");
+}
+
 static void testParserMissingRequiredCameraField()
 {
     std::string path = "/tmp/raybeam_missing_camera_field.cfg";
@@ -84,6 +122,8 @@ int main()
     testSphereBehindCamera();
     testSphereMiss();
     testColorClamping();
+    testPrimaryRayUsesNearestHitDistance();
+    testBinaryPpmExport();
     testParserMissingRequiredCameraField();
 
     if (failures != 0)

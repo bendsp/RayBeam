@@ -12,6 +12,7 @@
 #include <algorithm>
 #include <fstream>
 #include <iostream>
+#include <vector>
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 
@@ -58,17 +59,14 @@ RayTracer::RGB Core::castLightingRay(RayTracer::RGB materialColor, Math::HitPoin
 
 RayTracer::RGB Core::castCameraRay(RayTracer::Ray ray)
 {
-    float distance;
-    float bestDistance = std::numeric_limits<float>::max();
+    double bestDistance = std::numeric_limits<double>::max();
     RayTracer::RGB color{0, 0, 0};
     Math::HitPoint hitPoint = Math::HitPoint();
     Math::HitPoint bestHitPoint = Math::HitPoint();
     for (size_t i = 0; i < _primitives.size(); i++) {
         if (hitPoint = _primitives[i]->hits(ray); hitPoint.hit) {
-            // printf("hit\n");
-            distance = _primitives[i]->getIntersectionDistance(ray);
-            if (distance < bestDistance) {
-                bestDistance = distance;
+            if (hitPoint.distance < bestDistance) {
+                bestDistance = hitPoint.distance;
                 bestHitPoint = hitPoint;
                 color = _primitives[i]->getColor();
             }
@@ -95,9 +93,6 @@ void Core::renderScene(sf::RenderWindow &window, sf::Texture &texture, sf::Sprit
     RayTracer::Ray current_ray;
     RayTracer::RGB color;
 
-    std::ofstream outFile("output.ppm");
-
-    outFile << "P3\n" << width << " " << height << "\n255\n";
     for (int y = height - 1; y >= 0;--y) {
         for (int x = width - 1; x >= 0; --x) {
             double fx = static_cast<double>(x);
@@ -110,22 +105,38 @@ void Core::renderScene(sf::RenderWindow &window, sf::Texture &texture, sf::Sprit
             int ig = clampColor(static_cast<int>(color.g));
             int ib = clampColor(static_cast<int>(color.b));
 
-            outFile << ir << " " << ig << " " << ib << "\n";
-
             int index = ((height - 1 - y) * width + (width - 1 - x)) * 4;
             pixels[index + 0] = ir;
             pixels[index + 1] = ig;
             pixels[index + 2] = ib;
             pixels[index + 3] = 255;
         }
-
-        texture.update(pixels);
-        sprite.setTexture(texture);
-        window.clear();
-        window.draw(sprite);
-        window.display();
     }
 
+    texture.update(pixels);
+    sprite.setTexture(texture);
+    window.clear();
+    window.draw(sprite);
+    window.display();
+}
+
+void Core::exportPpm(const std::string &filepath, const sf::Uint8* pixels, int width, int height) const
+{
+    std::ofstream outFile(filepath, std::ios::binary);
+
+    if (!outFile) {
+        throw Core::CoreException("Could not open output file: " + filepath);
+    }
+    outFile << "P6\n" << width << " " << height << "\n255\n";
+    for (int i = 0; i < width * height; ++i) {
+        const int index = i * 4;
+        const char rgb[3] = {
+            static_cast<char>(pixels[index + 0]),
+            static_cast<char>(pixels[index + 1]),
+            static_cast<char>(pixels[index + 2])
+        };
+        outFile.write(rgb, sizeof(rgb));
+    }
     outFile.close();
 }
 
@@ -135,9 +146,9 @@ void Core::displayScene(void) {
     texture.create(_camera._width, _camera._height);
     sf::Sprite sprite;
 
-    sf::Uint8* pixels = new sf::Uint8[_camera._width * _camera._height * 4];
+    std::vector<sf::Uint8> pixels(_camera._width * _camera._height * 4);
 
-    renderScene(window, texture, sprite, pixels);
+    renderScene(window, texture, sprite, pixels.data());
 
     while (window.isOpen()) {
         sf::Event event;
@@ -149,31 +160,37 @@ void Core::displayScene(void) {
                 case sf::Event::KeyReleased:
                     if (event.key.code == sf::Keyboard::Left) {
                         _camera.moveLeft(10);
-                        renderScene(window, texture, sprite, pixels);
+                        renderScene(window, texture, sprite, pixels.data());
                     }
                     else if (event.key.code == sf::Keyboard::Right) {
                         _camera.moveRight(10);
-                        renderScene(window, texture, sprite, pixels);
+                        renderScene(window, texture, sprite, pixels.data());
                     }
                     else if (event.key.code == sf::Keyboard::Up) {
                         _camera.moveUp(10);
-                        renderScene(window, texture, sprite, pixels);
+                        renderScene(window, texture, sprite, pixels.data());
                     }
                     else if (event.key.code == sf::Keyboard::Down) {
                         _camera.moveDown(10);
-                        renderScene(window, texture, sprite, pixels);
+                        renderScene(window, texture, sprite, pixels.data());
                     }
                     else if (event.key.code == sf::Keyboard::Z) {
                         _camera.moveForward(10);
-                        renderScene(window, texture, sprite, pixels);
+                        renderScene(window, texture, sprite, pixels.data());
                     }
                     else if (event.key.code == sf::Keyboard::S) {
                         _camera.moveBackward(10);
-                        renderScene(window, texture, sprite, pixels);
+                        renderScene(window, texture, sprite, pixels.data());
+                    }
+                    else if (event.key.code == sf::Keyboard::E) {
+                        try {
+                            exportPpm("output.ppm", pixels.data(), _camera._width, _camera._height);
+                        } catch (const CoreException &exception) {
+                            std::cerr << exception.what() << std::endl;
+                        }
                     }
                     break;
             }
         }
     }
-    delete[] pixels;
 }
