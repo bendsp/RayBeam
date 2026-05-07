@@ -1,4 +1,5 @@
 RayBeam
+RayBeamTests
 *.o
 vgcore*
 .vscode/

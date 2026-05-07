@@ -15,6 +15,13 @@ SRC =	src/main.cpp \
 OBJ = $(SRC:.cpp=.o)
 
 NAME = RayBeam
+TEST_NAME = RayBeamTests
+TEST_SRC = tests/test.cpp \
+		src/scene.cpp \
+		src/parser/file_parser.cpp \
+		src/parser/parse_primitives.cpp \
+		src/parser/parse_lights.cpp \
+		src/parser/parse_transformations.cpp \
 
 CXXFLAGS = -std=c++17 -Wall -Wextra
 HOMEBREW_SFML2_PREFIX := $(shell brew --prefix sfml@2 2>/dev/null)
@@ -27,13 +34,18 @@ all: $(NAME)
 $(NAME): $(OBJ)
 		g++ -o $(NAME) $(OBJ) $(LDLIBS)
 
+$(TEST_NAME): $(TEST_SRC)
+		g++ $(CXXFLAGS) $(CPPFLAGS) -o $(TEST_NAME) $(TEST_SRC) $(LDLIBS)
+
+test: $(TEST_NAME)
+		./$(TEST_NAME)
 
 clean:
 		rm -f $(OBJ)
 
 fclean: clean
-		rm -f $(NAME)
+		rm -f $(NAME) $(TEST_NAME)
 
 re: fclean all
 
-.PHONY: all clean fclean re
+.PHONY: all test clean fclean re

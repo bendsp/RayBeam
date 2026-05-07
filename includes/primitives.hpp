@@ -373,8 +373,16 @@ namespace RayTracer {
                 double discriminant = b * b - 4 * a * c;
                 Math::HitPoint hitPoint = Math::HitPoint();
 				if (discriminant >= 0) {
-					float dst = (-b - sqrt(discriminant)) / (2 * a);
-                    if (dst < 0) {
+                    double sqrtDiscriminant = std::sqrt(discriminant);
+					double t1 = (-b - sqrtDiscriminant) / (2 * a);
+					double t2 = (-b + sqrtDiscriminant) / (2 * a);
+                    double dst = std::numeric_limits<double>::infinity();
+
+                    if (t1 > 0.001)
+                        dst = t1;
+                    else if (t2 > 0.001)
+                        dst = t2;
+                    if (std::isfinite(dst)) {
                         hitPoint.hit = true;
                         hitPoint.distance = dst;
                         hitPoint.hitPointVar = Math::Point3D(ray.getOrigin() + ray.getDirection() * dst);
@@ -386,14 +394,22 @@ namespace RayTracer {
 			}
 
             double getIntersectionDistance(const Ray &ray) const{
+                Math::Vector3D oc = ray.getOrigin() - _center;
                 double a = ray.getDirection().dot(ray.getDirection());
-                double b = 2 * ray.getDirection().dot(_center - ray.getOrigin());
-                double c = (_center - ray.getOrigin()).dot(_center - ray.getOrigin()) - _radius * _radius;
+                double b = 2.0 * oc.dot(ray.getDirection());
+                double c = oc.dot(oc) - _radius * _radius;
                 double discriminant = b * b - 4 * a * c;
 
-                double t1 = (-b - std::sqrt(discriminant)) / (2 * a);
-                double t2 = (-b + std::sqrt(discriminant)) / (2 * a);
-                return abs((std::min(t1, t2)));
+                if (discriminant < 0)
+                    return std::numeric_limits<double>::infinity();
+                double sqrtDiscriminant = std::sqrt(discriminant);
+                double t1 = (-b - sqrtDiscriminant) / (2 * a);
+                double t2 = (-b + sqrtDiscriminant) / (2 * a);
+                if (t1 > 0.001)
+                    return t1;
+                if (t2 > 0.001)
+                    return t2;
+                return std::numeric_limits<double>::infinity();
             }
 
             Math::Point3D getIntersectionPoint(const Ray &ray) const{

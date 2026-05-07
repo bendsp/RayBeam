@@ -9,23 +9,30 @@
 #include "raytracer.hpp"
 #include "primitives.hpp"
 #include "math.hpp"
+#include <algorithm>
 #include <fstream>
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 
+static int clampColor(int value)
+{
+    return std::clamp(value, 0, 255);
+}
+
 RayTracer::RGB Core::castLightingRay(RayTracer::RGB materialColor, Math::HitPoint objectHitpoint)
 {
     double intensity = _ambient;
-    Math::Vector3D toLight;
     RayTracer::Ray shadowRay;
     Math::HitPoint shadowHitpoint;
-    bool illuminated;
 
-    for (int i = 0; i < _lights.size(); ++i) {
+    for (size_t i = 0; i < _lights.size(); ++i) {
         bool illuminated = true;
-        shadowRay = RayTracer::Ray(objectHitpoint.hitPointVar, _lights[i]->getPosition() - objectHitpoint.hitPointVar);
-        for (int j = 0; j < _primitives.size(); ++j) {
+        Math::Vector3D toLight = _lights[i]->getPosition() - objectHitpoint.hitPointVar;
+        double lightDistance = toLight.magnitude();
+
+        shadowRay = RayTracer::Ray(objectHitpoint.hitPointVar, toLight);
+        for (size_t j = 0; j < _primitives.size(); ++j) {
             shadowHitpoint = _primitives[j]->hits(shadowRay);
             if (shadowHitpoint.hit == false) {
                 continue;
@@ -33,13 +40,18 @@ RayTracer::RGB Core::castLightingRay(RayTracer::RGB materialColor, Math::HitPoin
             if (abs(shadowHitpoint.distance) < 0.001) {
                 continue;
             }
-            intensity += 0.3;
+            if (shadowHitpoint.distance < lightDistance) {
+                illuminated = false;
+                break;
+            }
         }
-        intensity += _lights[i]->getIntensity(objectHitpoint.hitPointVar);
+        if (illuminated) {
+            intensity += _lights[i]->getIntensity(objectHitpoint.hitPointVar);
+        }
     }
-    int ar = static_cast<int>(materialColor.r * intensity);
-    int ag = static_cast<int>(materialColor.g * intensity);
-    int ab = static_cast<int>(materialColor.b * intensity);
+    int ar = clampColor(static_cast<int>(materialColor.r * intensity));
+    int ag = clampColor(static_cast<int>(materialColor.g * intensity));
+    int ab = clampColor(static_cast<int>(materialColor.b * intensity));
     RayTracer::RGB color = {ar, ag, ab};
     return color;
 }
@@ -51,7 +63,7 @@ RayTracer::RGB Core::castCameraRay(RayTracer::Ray ray)
     RayTracer::RGB color{0, 0, 0};
     Math::HitPoint hitPoint = Math::HitPoint();
     Math::HitPoint bestHitPoint = Math::HitPoint();
-    for (int i = 0; i < _primitives.size(); i++) {
+    for (size_t i = 0; i < _primitives.size(); i++) {
         if (hitPoint = _primitives[i]->hits(ray); hitPoint.hit) {
             // printf("hit\n");
             distance = _primitives[i]->getIntersectionDistance(ray);
@@ -94,9 +106,9 @@ void Core::renderScene(sf::RenderWindow &window, sf::Texture &texture, sf::Sprit
             rayDirection = (current_point - camera_origin).normalized();
             current_ray = RayTracer::Ray(camera_origin, rayDirection);
             color = castCameraRay(current_ray);
-            int ir = static_cast<int>(color.r);
-            int ig = static_cast<int>(color.g);
-            int ib = static_cast<int>(color.b);
+            int ir = clampColor(static_cast<int>(color.r));
+            int ig = clampColor(static_cast<int>(color.g));
+            int ib = clampColor(static_cast<int>(color.b));
 
             outFile << ir << " " << ig << " " << ib << "\n";
 

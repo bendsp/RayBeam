@@ -2,6 +2,7 @@
 
 #include <libconfig.h++>
 #include <iostream>
+#include <memory>
 #include <unordered_map>
 #include <vector>
 #include "primitives.hpp"
@@ -13,20 +14,22 @@
 
 class Core {
     public:
+        Core() : _ambient(0), _diffuse(0) {}
+
         // * Getters
         const RayTracer::Camera &getCamera() {
             return _camera;
         }
-        const std::vector <RayTracer::IPrimitive *> &getPrimitives() {
+        const std::vector <std::unique_ptr<RayTracer::IPrimitive>> &getPrimitives() {
             return _primitives;
         }
-        const std::vector <RayTracer::ILight *> &getLights() {
+        const std::vector <std::unique_ptr<RayTracer::ILight>> &getLights() {
             return _lights;
         }
-        const double getAmbient() {
+        double getAmbient() {
             return _ambient;
         }
-        const double getDiffuse() {
+        double getDiffuse() {
             return _diffuse;
         }
 
@@ -34,11 +37,11 @@ class Core {
         void setCamera(const RayTracer::Camera &camera) {
             _camera = camera;
         }
-        void addPrimitive(RayTracer::IPrimitive *primitive) {
-            _primitives.push_back(primitive);
+        void addPrimitive(std::unique_ptr<RayTracer::IPrimitive> primitive) {
+            _primitives.push_back(std::move(primitive));
         }
-        void addLight(RayTracer::ILight *light) {
-            _lights.push_back(light);
+        void addLight(std::unique_ptr<RayTracer::ILight> light) {
+            _lights.push_back(std::move(light));
         }
         void setAmbient(double ambient) {
             _ambient = ambient;
@@ -56,8 +59,8 @@ class Core {
 
         // * Attributes
         RayTracer::Camera _camera;
-        std::vector <RayTracer::IPrimitive *> _primitives;
-        std::vector <RayTracer::ILight *> _lights;
+        std::vector <std::unique_ptr<RayTracer::IPrimitive>> _primitives;
+        std::vector <std::unique_ptr<RayTracer::ILight>> _lights;
         double _ambient;
         double _diffuse;
 

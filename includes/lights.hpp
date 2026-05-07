@@ -31,10 +31,12 @@ namespace RayTracer {
             }
 
             void setBrightness(double brightness) override {
+                _diffuse = brightness;
             }
 
             double getIntensity(const Math::Point3D &point) const override {
-                return 0;
+                (void)point;
+                return _diffuse;
             }
 
             //* Getters
@@ -112,6 +114,11 @@ namespace RayTracer {
             }
 
             //* Methods
+            double getIntensity(const Math::Point3D &point) const override {
+                double distance = (_position - point).magnitude();
+                return _diffuse / (1.0 + distance * distance * 0.00001);
+            }
+
             void displayLight(void) const {
                 std::cout << "[POINT LIGHT]" << std::endl;
                 std::cout << "Position : {" << _position.x << ", " << _position.y << ", " << _position.z << "}" << std::endl;
@@ -173,6 +180,11 @@ namespace RayTracer {
             }
 
             //* Methods
+            double getIntensity(const Math::Point3D &point) const override {
+                (void)point;
+                return _diffuse;
+            }
+
             void displayLight(void) const {
                 std::cout << "[DIRECTIONAL LIGHT]" << std::endl;
                 std::cout << "Position : {" << _position.x << ", " << _position.y << ", " << _position.z << "}" << std::endl;
